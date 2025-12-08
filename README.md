@@ -1,61 +1,70 @@
 Artesano Market
 
-Artesano Market es una aplicación web desarrollada con Django que permite gestionar productos artesanales, realizar pedidos y administrar información de clientes y vendedores. El proyecto utiliza MySQL como base de datos principal y está estructurado para facilitar el despliegue y la colaboración en equipo.
+Artesano Market es una aplicación web robusta desarrollada con **Django** que ofrece una plataforma completa para la gestión de productos artesanales, el procesamiento de pedidos y la administración de información esencial de clientes y vendedores.
 
-Características principales
+El proyecto está diseñado para ser escalable, utilizando MySQL como base de datos principal y una estructura modular que facilita tanto el despliegue en la nube (como AWS) como la colaboración en equipo.
 
-Gestión de usuarios, productos y pedidos.
 
-Conexión a base de datos MySQL mediante MySQL Workbench.
+Características Principales
 
-Generación de archivos PDF usando ReportLab.
+Gestión Completa: Sistema para la administración de usuarios, inventario de productos artesanales y seguimiento de pedidos.
+Conexión a MySQL: Utiliza MySQL Workbench y un motor de base de datos MySQL para almacenamiento persistente y escalable.
+Generación de Documentos: Capacidad para generar archivos PDF utilizando la librería ReportLab.
+Tecnologías Frontend: Interfaz de usuario desarrollada con HTML, CSS y JavaScript.
+Preparado para Despliegue: Estructura optimizada para su implementación en servidores cloud (ej. AWS).
+Escalabilidad: Arquitectura lista para futuras integraciones, incluyendo módulos de pago.
 
-Frontend con HTML, CSS y JavaScript.
+## Requisitos Previos
 
-Proyecto preparado para ser desplegado en servidores como AWS.
-
-Estructura ordenada y lista para incluir futuras integraciones de pago.
-
-Requisitos previos
-
-Antes de ejecutar el proyecto, asegúrese de tener instalado:
+Antes de proceder con la instalación y ejecución del proyecto, asegúrese de tener los siguientes componentes instalados en su sistema:
 
 Python 3.10 o superior
-
 MySQL Server
-
 MySQL Workbench
-
 Git
+pip (Administrador de paquetes de Python)
 
-pip para instalar dependencias
+Instalación del Proyecto
 
-Instalación del proyecto
+Siga estos pasos para configurar y ejecutar la aplicación Artesano Market de forma local:
 
-Clonar el repositorio:
+1. Clonar el Repositorio
 
-git clone https://github.com/tu_usuario/tu_repositorio.git
+Abra su terminal y ejecute los siguientes comandos:
+
+
+git clone [https://github.com/tu_usuario/tu_repositorio.git](https://github.com/tu_usuario/tu_repositorio.git)
 cd tu_repositorio
+2. Configurar el Entorno Virtual
+Se recomienda usar un entorno virtual para aislar las dependencias:
 
 
-Crear y activar un entorno virtual:
 
+Crear el entorno virtual
 python -m venv venv
+
+Activar el entorno virtual (Windows)
 venv\Scripts\activate
 
+Si usa Linux/macOS:
+source venv/bin/activate
+3. Instalar Dependencias
+Con el entorno virtual activado, instale todas las librerías necesarias:
 
-Instalar dependencias:
 
 pip install -r requirements.txt
+4. Configuración de la Base de Datos
+a. Crear la Base de Datos en MySQL
+Abra MySQL Workbench.
 
+Crear una base de datos llamada artesano_db (o el nombre que desee utilizar).
 
-Crear la base de datos en MySQL:
+b. Configurar settings.py
+Edite el archivo Artesano/settings.py para establecer la conexión a su base de datos local.
 
-Abrir MySQL Workbench
+Importante: Reemplace 'tu_usuario' y 'tu_contraseña' con sus credenciales de MySQL.
 
-Crear una base de datos llamada artesano_db (o el nombre que uses en settings.py)
-
-Configurar la base de datos en settings.py:
+Python
 
 DATABASES = {
     'default': {
@@ -67,41 +76,38 @@ DATABASES = {
         'PORT': '3306',
     }
 }
-
-
-Ejecutar migraciones:
+5. Ejecutar Migraciones
+Aplique las migraciones de Django para crear las tablas en su base de datos:
 
 python manage.py migrate
+6. Ejecutar el Servidor
+Inicie el servidor de desarrollo de Django:
 
-
-Ejecutar el servidor:
 
 python manage.py runserver
-
-Estructura del proyecto
-Artesano/
-│── core/
-│   ├── models.py
-│   ├── views/
-│   ├── templates/
-│   └── static/
-│
-│── Artesano/
-│   ├── settings.py
-│   ├── urls.py
-│   └── wsgi.py
-│
-│── requirements.txt
-│── manage.py
-│── README.md
-
 Uso
+Una vez que el servidor se esté ejecutando, podrá acceder a la aplicación desde su navegador.
 
-Acceder a la aplicación en:
+Acceder a la aplicación en: http://127.0.0.1:8000/
 
-http://127.0.0.1:8000/
+Flujo: Inicie sesión (si está habilitado) y comience a administrar productos y pedidos desde el panel.
 
+Estructura del Proyecto
+La aplicación Artesano Market sigue una estructura estándar de Django:
 
-Iniciar sesión si está habilitado.
-
-Administrar productos y pedidos desde el panel.
+Artesano/
+│
+├── core/                         # Aplicación principal de Django
+│   ├── models.py                 # Definición de modelos de la base de datos
+│   ├── views/                    # Lógica de las vistas y controladores
+│   ├── templates/                # Archivos HTML (vistas)
+│   └── static/                   # Archivos estáticos (CSS, JS, imágenes)
+│
+├── Artesano/                     # Configuración principal del proyecto
+│   ├── settings.py               # Configuración global del proyecto
+│   ├── urls.py                   # Definición de rutas URL
+│   └── wsgi.py                   # Puerta de enlace para despliegue en producción
+│
+├── requirements.txt              # Lista de dependencias de Python
+├── manage.py                     # Utilidad de línea de comandos de Django
+└── README.md                     # Este archivo
