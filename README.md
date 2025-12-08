@@ -95,19 +95,19 @@ Flujo: Inicie sesión (si está habilitado) y comience a administrar productos y
 Estructura del Proyecto
 La aplicación Artesano Market sigue una estructura estándar de Django:
 
-Artesano/
+ArtesanoMarket/
 │
-├── core/                         # Aplicación principal de Django
-│   ├── models.py                 # Definición de modelos de la base de datos
-│   ├── views/                    # Lógica de las vistas y controladores
-│   ├── templates/                # Archivos HTML (vistas)
-│   └── static/                   # Archivos estáticos (CSS, JS, imágenes)
+├── core/                     Aplicación principal
+│   ├── models.py             Modelos de base de datos
+│   ├── views/                Lógica y controladores
+│   ├── templates/            Archivos HTML
+│   └── static/               Archivos CSS, JS e imágenes
 │
-├── Artesano/                     # Configuración principal del proyecto
-│   ├── settings.py               # Configuración global del proyecto
-│   ├── urls.py                   # Definición de rutas URL
-│   └── wsgi.py                   # Puerta de enlace para despliegue en producción
+├── Artesano/                 Configuración principal del proyecto
+│   ├── settings.py           Configuración global
+│   ├── urls.py               Definición de rutas
+│   └── wsgi.py               Configuración para producción
 │
-├── requirements.txt              # Lista de dependencias de Python
-├── manage.py                     # Utilidad de línea de comandos de Django
-└── README.md                     # Este archivo
+├── requirements.txt          Dependencias del proyecto
+├── manage.py                 Utilidad de línea de comandos de Django
+└── README.md                 Este archivo
