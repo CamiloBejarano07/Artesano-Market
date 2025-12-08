@@ -1,4 +1,5 @@
- Artesano Market
+```
+Artesano Market
 
 Artesano Market es una aplicación web desarrollada con Django que ofrece una plataforma completa para la gestión de productos artesanales, el procesamiento de pedidos y la administración de clientes y vendedores.
 
@@ -18,7 +19,7 @@ Instalación del Proyecto
 
  1. Clonar el Repositorio
 
-```
+
 git clone https://github.com/tu_usuario/tu_repositorio.git
 cd tu_repositorio
 2. Crear el Entorno Virtual
