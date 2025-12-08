@@ -1,4 +1,3 @@
-```
 Artesano Market
 
 Artesano Market es una aplicación web desarrollada con Django que ofrece una plataforma completa para la gestión de productos artesanales, el procesamiento de pedidos y la administración de clientes y vendedores.
@@ -19,11 +18,12 @@ Instalación del Proyecto
 
  1. Clonar el Repositorio
 
-
+```
 git clone https://github.com/tu_usuario/tu_repositorio.git
-cd tu_repositorio
+cd tu_repositor
+```
 2. Crear el Entorno Virtual
-
+```
 python -m venv venv
 Activar en Windows:
 
@@ -34,16 +34,21 @@ Activar en Linux o macOS:
 
 
 source venv/bin/activate
+```
 3. Instalar Dependencias
-
+```
 pip install -r requirements.txt
 Configuración de la Base de Datos
+```
 4. Crear Base de Datos
+```
 En MySQL Workbench cree una base llamada:
 
 
 artesano_db
+```
 5. Configurar settings.py
+```
 Editar el archivo Artesano/settings.py:
 
 
@@ -57,25 +62,30 @@ DATABASES = {
         'PORT': '3306',
     }
 }
+```
 Ejecutar Migraciones
-
+```
 python manage.py migrate
+```
 Ejecutar el Servidor
-
+```
 python manage.py runserver
+```
 Acceder en el navegador:
-
+```
 http://127.0.0.1:8000/
+```
 
 Flujo de Uso
+
 Inicie sesión (si está habilitado).
 
 Gestione productos, pedidos y usuarios desde el panel.
 
 Explore el catálogo disponible.
-
+```
 Estructura del Proyecto
-
+```
 ArtesanoMarket/
 │
 ├── core/                     
