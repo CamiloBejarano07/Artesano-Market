@@ -77,13 +77,14 @@ http://127.0.0.1:8000/
 ```
 
 Flujo de Uso
-
+```
 Inicie sesión (si está habilitado).
 
 Gestione productos, pedidos y usuarios desde el panel.
 
 Explore el catálogo disponible.
 ```
+
 Estructura del Proyecto
 ```
 ArtesanoMarket/
