@@ -1,0 +1,222 @@
+{% load static %}
+{% load currency_tags %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel de Productos</title>
+    <link rel="stylesheet" href="{% static 'css/produseller/productos.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Acme&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/produseller/panel_seller.css' %}">
+    <link rel="icon" type="image/png" sizes="48x48" href="{% static 'images/icono_artesano.png' %}" />
+</head>
+<body>
+<header>
+    <h1>Panel de Productos</h1>
+    
+    <div class="header-container">
+        <div class="footer-actions">
+            <a href="{% url 'seller_settings' %}" class="btn btn-back">Volver a Configuraciones</a>
+        </div>
+
+        <div class="filter-center">
+            <!-- Búsqueda -->
+            <form action="{% url 'panel_productos_vendedor' %}" method="get" class="filter-form" id="filterFormPanel">
+                <label for="criterio">Buscar por:</label>
+                <select name="criterio" id="criterio">
+                    <option value="nombre" {% if criterio == 'nombre' %}selected{% endif %}>Nombre</option>
+                    <option value="precio" {% if criterio == 'precio' %}selected{% endif %}>Precio</option>
+                    <option value="stock" {% if criterio == 'stock' %}selected{% endif %}>Stock</option>
+                </select>
+                <input type="text" name="valor" placeholder="Escribe tu búsqueda..." value="{{ valor }}">
+                <button type="submit">Buscar</button>
+                <button type="button" class="btn-clear" onclick="limpiarFiltroPanel()">Limpiar</button>
+            </form>
+        </div>
+    </div>
+</header>
+
+<main>
+    <!-- Estadísticas generales -->
+    <div class="stats-container">
+        <div class="stat-card">
+            <h3>{{ total_productos }}</h3>
+            <p>Productos Totales</p>
+        </div>
+        <div class="stat-card">
+            <h3 style="color: #ff6b6b;">{{ total_stock_bajo }}</h3>
+            <p>Productos con Stock Bajo</p>
+        </div>
+    </div>
+
+    <!-- Productos con Stock Bajo -->
+    {% if productos_stock_bajo %}
+    <section class="section-stock-bajo">
+        <h2 style="color: #ff6b6b;">⚠️ Productos con Stock Bajo </h2>
+        
+        <div class="alert-warning">
+            <strong>Atención:</strong> Los siguientes productos tienen stock bajo y es recomendable reabastecer pronto.
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Precio</th>
+                    <th>Stock Actual</th>
+                    <th>Stock Mínimo</th>
+                    <th>Imagen</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for producto in productos_stock_bajo %}
+                    <tr style="background-color: rgba(255, 107, 107, 0.1);">
+                        <td>{{ producto.nombre }}</td>
+                        <td>{{ producto.precio|format_cop }}</td>
+                        <td>
+                            <strong style="color: #ff6b6b;">{{ producto.cantidad_existente }}</strong>
+                        </td>
+                        <td>{{ producto.stock_min }}</td>
+                        <td>
+                            {% if producto.imagen %}
+                                <img src="{{ producto.imagen.url }}" alt="imagen" width="60" height="60" style="object-fit: cover; border-radius: 5px;">
+                            {% else %}
+                                Sin imagen
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'producto_editar' producto.id_producto %}" class="btn">Editar</a>
+                            <a href="{% url 'producto_eliminar' producto.id_producto %}"
+                               class="btn btn-danger"
+                               onclick="return confirm('¿Estás seguro de eliminar este producto?')">Eliminar</a>
+                        </td>
+                    </tr>
+                    <tr style="background-color: rgba(255, 107, 107, 0.05);">
+                        <td colspan="6">
+                            <div class="alert-danger">
+                                ⚠️ Stock bajo, suministra productos pronto
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+    {% endif %}
+
+    <!-- Productos Publicados (Stock Normal) -->
+    <section class="section-publicados {% if productos_stock_bajo %}section-divider{% endif %}">
+        <h2 style="color: #28a745;">✓ Productos Publicados (Stock Normal)</h2>
+
+        <!-- Lista vacía -->
+        {% if not productos_publicados %}
+            <p style="color: #666;">No tienes productos con stock normal. Todos tus productos tienen stock bajo.</p>
+        {% else %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Precio</th>
+                        <th>Stock Actual</th>
+                        <th>Stock Mínimo</th>
+                        <th>Imagen</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for producto in productos_publicados %}
+                        <tr>
+                            <td>{{ producto.nombre }}</td>
+                            <td>{{ producto.precio|format_cop }}</td>
+                            <td>{{ producto.cantidad_existente }}</td>
+                            <td>{{ producto.stock_min }}</td>
+                            <td>
+                                {% if producto.imagen %}
+                                    <img src="{{ producto.imagen.url }}" alt="imagen" width="60" height="60" style="object-fit: cover; border-radius: 5px;">
+                                {% else %}
+                                    Sin imagen
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'producto_editar' producto.id_producto %}" class="btn">Editar</a>
+                                <a href="{% url 'producto_eliminar' producto.id_producto %}"
+                                   class="btn btn-danger"
+                                   onclick="return confirm('¿Estás seguro de eliminar este producto?')">Eliminar</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </section>
+
+    <!-- Caso sin productos -->
+    {% if not productos_publicados and not productos_stock_bajo %}
+        <div style="text-align: center; padding: 40px; color: #999;">
+            <h3>No tienes productos</h3>
+            <p>Comienza creando tu primer producto.</p>
+            <a href="{% url 'producto_create' %}" class="btn btn-primary">Crear Producto</a>
+        </div>
+    {% endif %}
+</main>
+
+
+
+<footer class="footer">
+  <ul class="social-icon">
+    <li class="icon-elem">
+      <a href="https://www.youtube.com/@ArtesanoMarket-06" class="icon"><ion-icon name="logo-youtube"></ion-icon></a>
+    </li>
+    <li class="icon-elem">
+      <a href="https://www.instagram.com/artek__06/" class="icon"><ion-icon name="logo-instagram"></ion-icon></a>
+    </li>
+    <li class="icon-elem">
+      <a href="https://wa.me/573009688222?text=Hola,%20quiero%20más%20información" class="icon"><ion-icon name="logo-whatsapp"></ion-icon></a>
+    </li>
+    <li class="icon-elem">
+      <a href="https://www.facebook.com/profile.php?id=61584617440121" class="icon"><ion-icon name="logo-facebook"></ion-icon></a>
+    </li>
+    <li class="icon-elem">
+      <a href="https://mail.google.com/mail/?view=cm&fs=1&to=artesanomarkett@gmail.com" class="icon"><ion-icon name="mail-outline"></ion-icon></a>
+    </li>
+  </ul>
+
+    <ul class="menu-footer">
+        <li class="menu-elem"><a href="{% url 'dashboard_seller' %}" class="menu-icon-footer">Inicio</a></li>
+        <li class="menu-elem"><a href="{% url 'seller_settings' %}" class="menu-icon-footer">Configuración</a></li>
+
+        {% if request.session.user_id %}
+        <li class="menu-elem">
+            <form id="logout-form-footer" action="{% url 'auth_logout' %}" method="post" style="display:none;">
+                {% csrf_token %}
+            </form>
+            <a href="#" class="menu-icon-footer"
+               onclick="event.preventDefault(); document.getElementById('logout-form-footer').submit();">
+                Cerrar Sesión
+            </a>
+        </li>
+        {% endif %}
+
+        <li class="menu-elem"><a href="{% url 'help' %}" class="menu-icon-footer">Contáctanos</a></li>
+    </ul>
+
+    <p class="text-footer">2025 | Todos los derechos reservados</p>
+</footer>
+
+<script src="{% static 'assets/js/scripts.js' %}"></script>
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+<script src="{% static 'assets/js/admin_seller.js' %}"></script>
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+<script>
+    function limpiarFiltroPanel() {
+        document.getElementById("filterFormPanel").reset();
+        window.location.href = "{% url 'panel_productos_vendedor' %}";
+    }
+</script>
+</body>
+</html>

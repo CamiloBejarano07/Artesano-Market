@@ -1,0 +1,221 @@
+{% load static %}
+{% load currency_tags %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout | Arte Market</title>
+  <link rel="stylesheet" href="{% static 'css/checkout.css' %}">
+  <link rel="icon" type="image/png" sizes="48x48" href="{% static 'images/icono_artesano.png' %}" /></head>
+<body>
+  <header id="Header">
+    <img class="logo" src="{% static 'images/logo_artesano.png' %}" alt="Logo">
+    <nav class="navegacion">
+      {% if user_role %}
+        {% if user_role|lower == 'vendedor' %}
+          <a href="{% url 'dashboard_seller' %}">Inicio</a>
+        {% elif user_role|lower == 'administrador' or user_role|lower == 'admin' %}
+          <a href="{% url 'dashboard_admin' %}">Inicio</a>
+        {% elif user_role|lower == 'cliente' %}
+          <a href="{% url 'dashboard_cliente' %}">Inicio</a>
+        {% else %}
+          <a href="{% url 'inicio' %}">Inicio</a>
+        {% endif %}
+      {% else %}
+        <a href="{% url 'inicio' %}">Inicio</a>
+      {% endif %}
+      <a href="{% url 'catalog' %}">Catálogo</a>
+      {% if user_logged %}
+        <a href="{% url 'auth_logout' %}">Cerrar Sesión</a>
+      {% else %}
+        <a href="{% url 'login' %}">Iniciar Sesión</a>
+      {% endif %}
+      <a href="{% url 'help' %}">Contáctanos</a>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Completar Compra</h1>
+
+    {% if messages %}
+    <div class="messages">
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <div style="max-width: 600px; margin: 0 auto;">
+      {% if request.GET.success and request.GET.order %}
+      <div style="max-width:600px;margin:1rem auto;padding:1rem;border-radius:8px;background:#E8F5E9;color:#2E7D32;text-align:center;">
+        <h2 style="margin:0 0 .5rem 0;color:#2E7D32;">Compra realizada</h2>
+        <p style="margin:0; font-weight:600;">Tu pedido ha sido generado con el número: <span style="background:#fff;padding:4px 8px;border-radius:4px;color:#111;">#{{ request.GET.order }}</span></p>
+      </div>
+      {% endif %}
+      <div class="cart-summary" style="margin-bottom: 2rem;">
+        <h3 style="margin-bottom: 1rem; color: #F39C12;">Resumen del Pedido</h3>
+        <div class="summary-row">
+          <span class="summary-label">Total a Pagar:</span>
+          <span class="summary-value">{{ total|format_cop }}</span>
+        </div>
+      </div>
+
+      <div class="cart-table-container">
+        <form id="checkout-form" method="post">
+          {% csrf_token %}
+
+          <h3 style="padding: 1rem; color: #F39C12; margin-bottom: 0;">Información de Envío</h3>
+
+          <div style="padding: 1.5rem;">
+            <div style="margin-bottom: 1.5rem;">
+              <label for="direccion_envio" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #333;">Dirección de Envío:</label>
+              <textarea name="direccion_envio" id="direccion_envio" placeholder="Calle, número, apartamento, ciudad..." required style="width: 100%; padding: 0.8rem; border: 2px solid #DEB887; border-radius: 5px; font-family: inherit; font-size: 1rem;"></textarea>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+              <label for="metodo_pago" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #333;">Método de Pago:</label>
+              <select name="metodo_pago" id="metodo_pago" required style="width: 100%; padding: 0.8rem; border: 2px solid #DEB887; border-radius: 5px; font-family: inherit; font-size: 1rem;">
+                <option value="">Selecciona un método</option>
+                <option value="Tarjeta">Tarjeta de Crédito / Débito</option>
+                <option value="PayPal">PayPal</option>
+                <option value="Transferencia">Transferencia Bancaria</option>
+              </select>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+              <label for="comentarios" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #333;">Comentarios (Opcional):</label>
+              <textarea name="comentarios" id="comentarios" placeholder="Notas adicionales para tu pedido..." style="width: 100%; padding: 0.8rem; border: 2px solid #DEB887; border-radius: 5px; font-family: inherit; font-size: 1rem;"></textarea>
+            </div>
+
+            <div id="processing-message" style="display: none; padding: 1rem; background: #E8F5E9; color: #2E7D32; border-radius: 5px; margin-bottom: 1rem; text-align: center;">
+              <strong>Procesando pago...</strong>
+            </div>
+
+            <div style="text-align: center; display: flex; gap: 1rem;">
+              <a href="{% url 'cart' %}" class="btn-secundario" style="flex-grow: 1; text-align: center; text-decoration: none;">Volver al Carrito</a>
+              <button type="submit" id="submit-btn" class="btn-primario" style="flex-grow: 1;">Completar Compra</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+  <ul class="social-icon">
+    <li class="icon-elem">
+      <a href="https://www.youtube.com/@ArtesanoMarket-06" class="icon"><ion-icon name="logo-youtube"></ion-icon></a>
+    </li>
+    <li class="icon-elem">
+      <a href="https://www.instagram.com/artek__06/" class="icon"><ion-icon name="logo-instagram"></ion-icon></a>
+    </li>
+    <li class="icon-elem">
+      <a href="https://wa.me/573009688222?text=Hola,%20quiero%20más%20información" class="icon"><ion-icon name="logo-whatsapp"></ion-icon></a>
+    </li>
+    <li class="icon-elem">
+      <a href="https://www.facebook.com/profile.php?id=61584617440121" class="icon"><ion-icon name="logo-facebook"></ion-icon></a>
+    </li>
+    <li class="icon-elem">
+      <a href="https://mail.google.com/mail/?view=cm&fs=1&to=artesanomarkett@gmail.com" class="icon"><ion-icon name="mail-outline"></ion-icon></a>
+    </li>
+  </ul>
+
+    <ul class="menu-footer">
+      <li class="menu-elem">
+        {% if user_role %}
+          {% if user_role|lower == 'vendedor' %}
+            <a href="{% url 'dashboard_seller' %}" class="menu-icon-footer">Inicio</a>
+          {% elif user_role|lower == 'administrador' or user_role|lower == 'admin' %}
+            <a href="{% url 'dashboard_admin' %}" class="menu-icon-footer">Inicio</a>
+          {% elif user_role|lower == 'cliente' %}
+            <a href="{% url 'dashboard_cliente' %}" class="menu-icon-footer">Inicio</a>
+          {% else %}
+            <a href="{% url 'inicio' %}" class="menu-icon-footer">Inicio</a>
+          {% endif %}
+        {% else %}
+          <a href="{% url 'inicio' %}" class="menu-icon-footer">Inicio</a>
+        {% endif %}
+      </li>
+      <li class="menu-elem"><a href="{% url 'catalog' %}" class="menu-icon-footer">Catálogo</a></li>
+      {% if user_logged %}
+        <li class="menu-elem"><a href="{% url 'auth_logout' %}" class="menu-icon-footer">Cerrar Sesión</a></li>
+      {% else %}
+        <li class="menu-elem"><a href="{% url 'login' %}" class="menu-icon-footer">Iniciar Sesión</a></li>
+      {% endif %}
+      <li class="menu-elem"><a href="{% url 'help' %}" class="menu-icon-footer">Contáctanos</a></li>
+    </ul>
+
+    <p class="text-footer">2025 | Todos los derechos reservados</p>
+  </footer>
+
+  <script src="{% static 'js/script.js' %}"></script>
+  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+  
+  <script>
+    // Formulario de checkout simple (SIMULACIÓN - sin Stripe por ahora)
+    document.getElementById('checkout-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const direccion = document.getElementById('direccion_envio').value;
+      const metodo = document.getElementById('metodo_pago').value;
+      const comentarios = document.getElementById('comentarios').value;
+      const submitBtn = document.getElementById('submit-btn');
+      const processingMsg = document.getElementById('processing-message');
+      
+      if (!direccion) {
+        alert('Por favor ingresa una dirección de envío');
+        return;
+      }
+      
+      if (!metodo) {
+        alert('Por favor selecciona un método de pago');
+        return;
+      }
+      
+      // Mostrar mensaje de procesamiento
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Procesando...';
+      processingMsg.style.display = 'block';
+      
+      try {
+        // Hacer POST al servidor para simular pago
+        const response = await fetch('/checkout/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+          },
+          body: new URLSearchParams({
+            'metodo_pago': metodo,
+            'direccion_envio': direccion,
+            'comentarios': comentarios
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          // Pago exitoso (simulado)
+          alert('' + data.message);
+          window.location.href = data.redirect_url;
+        } else {
+          // Pago rechazado
+          alert('' + data.error);
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Completar Compra';
+          processingMsg.style.display = 'none';
+        }
+      } catch (err) {
+        alert('Error: ' + err.message);
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Completar Compra';
+        processingMsg.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>

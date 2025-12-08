@@ -1,0 +1,200 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gestión de Categorías</title>
+  <link rel="stylesheet" href="{% static 'css/admin_settings.css' %}">
+  <link rel="icon" type="image/png" sizes="48x48" href="{% static 'images/icono_artesano.png' %}" />
+  <style>
+    .categories-container {
+      margin: 20px 0;
+    }
+    .category-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      background-color: #f8f9fa;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border-left: 4px solid #fd9d3f;
+    }
+    .category-info {
+      flex: 1;
+    }
+    .category-info h3 {
+      margin: 0 0 5px 0;
+      color: #003d5c;
+    }
+    .category-info p {
+      margin: 0;
+      color: #666;
+      font-size: 0.9em;
+    }
+    .category-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .btn-small {
+      padding: 8px 12px;
+      font-size: 0.9em;
+      text-decoration: none;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      display: inline-block;
+    }
+    .btn-edit {
+      background-color: #fd9d3f;
+      color: white;
+    }
+    .btn-edit:hover {
+      background-color: #e08a2d;
+    }
+    .btn-delete {
+      background-color: #e74c3c;
+      color: white;
+      height: 37px;
+    }
+    .btn-delete:hover {
+      background-color: #c0392b;
+    }
+    .btn-create {
+      background-color: #fd9d3f;
+      color: white;
+      padding: 12px 24px;
+      margin-bottom: 20px;
+      display: inline-block;
+      text-decoration: none;
+      border-radius: 5px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      font-size: 16px;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+    .btn-create:hover {
+      background-color: #e08a2d;
+      transform: scale(1.05);
+    }
+    .btn-back {
+      background-color: #F39C12;
+      color: white;
+      padding: 12px 24px;
+      margin-top: 20px;
+      display: inline-block;
+      text-decoration: none;
+      border-radius: 5px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      font-size: 16px;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+    .btn-back:hover {
+      background-color: #D35400;
+      transform: scale(1.05);
+    }
+    .empty-message {
+      text-align: center;
+      padding: 40px 20px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+
+<header id="Header">
+  <img class="logo" src="{% static 'images/logo_artesano.png' %}" alt="Logo Artesano">
+  <nav class="navegacion">
+    <a href="{% url 'dashboard_admin' %}">Inicio</a>
+    <a href="{% url 'admin_settings' %}">Configuraciones</a>
+    <form id="logout-form" action="{% url 'auth_logout' %}" method="post" style="display:none;">
+      {% csrf_token %}
+    </form>
+    <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+      Cerrar Sesión
+    </a>
+  </nav>
+</header>
+
+<main>
+  <section class="admin-settings">
+    <h1>Gestión de Categorías</h1>
+    
+    <a href="{% url 'crear_categoria_admin' %}" class="btn-create">+ Crear Nueva Categoría</a>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <div class="categories-container">
+      {% if categorias %}
+        {% for categoria in categorias %}
+          <div class="category-item">
+            <div class="category-info">
+              <h3>{{ categoria.nombre_categoria }}</h3>
+              <p>{{ categoria.descripcion|default:"Sin descripción" }}</p>
+            </div>
+            <div class="category-actions">
+              <a href="{% url 'editar_categoria_admin' categoria.id_categoria %}" class="btn-small btn-edit">Editar</a>
+              <form method="post" action="{% url 'eliminar_categoria_admin' categoria.id_categoria %}" style="display:inline;" onclick="return confirm('¿Estás seguro de que deseas eliminar esta categoría?');">
+                {% csrf_token %}
+                <button type="submit" class="btn-small btn-delete">Eliminar</button>
+              </form>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="empty-message">
+          <p>No hay categorías registradas. <a href="{% url 'crear_categoria_admin' %}">Crea una nueva</a></p>
+        </div>
+      {% endif %}
+    </div>
+
+    <a href="{% url 'admin_settings' %}" class="btn-back">Volver a Configuraciones</a>
+  </section>
+</main>
+
+<footer class="footer">
+    <ul class="social-icon">
+        <li class="icon-elem">
+        <a href="https://www.youtube.com/@ArtesanoMarket-06" class="icon"><ion-icon name="logo-youtube"></ion-icon></a>
+        </li>
+        <li class="icon-elem">
+        <a href="https://www.instagram.com/artek__06/" class="icon"><ion-icon name="logo-instagram"></ion-icon></a>
+        </li>
+        <li class="icon-elem">
+        <a href="https://wa.me/573009688222?text=Hola,%20quiero%20más%20información" class="icon"><ion-icon name="logo-whatsapp"></ion-icon></a>
+        </li>
+        <li class="icon-elem">
+        <a href="https://www.facebook.com/profile.php?id=61584617440121" class="icon"><ion-icon name="logo-facebook"></ion-icon></a>
+        </li>
+        <li class="icon-elem">
+        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=artesanomarkett@gmail.com" class="icon"><ion-icon name="mail-outline"></ion-icon></a>
+        </li>
+    </ul>
+
+    <ul class="menu-footer">
+        <li class="menu-elem"><a href="{% url 'dashboard_admin' %}" class="menu-icon-footer">Inicio</a></li>
+        <li class="menu-elem"><a href="{% url 'admin_settings' %}" class="menu-icon-footer">Configuraciones</a></li>
+            <a href="#" class="menu-icon-footer"
+               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                Cerrar Sesión
+            </a>
+        </li>
+    </ul>
+
+    <p class="text-footer">2025 | Todos los derechos reservados</p>
+</footer>
+
+<script src="{% static 'js/scripts.js' %}"></script>
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</body>
+</html>

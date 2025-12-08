@@ -1,0 +1,133 @@
+{% load tz %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedido Enviado - Artesano Market</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #f5f5f5;
+            font-family: 'Segoe UI', sans-serif;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #F39C12, #E67E22);
+            padding: 30px 20px;
+            color: #fff;
+            text-align: center;
+            border-bottom: 4px solid #D35400;
+        }
+        .header h1 {
+            margin: 10px 0 0;
+            font-size: 24px;
+            font-weight: 700;
+        }
+        .content {
+            padding: 30px 20px;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+        .section-title {
+            background: #F39C12;
+            color: #fff;
+            padding: 10px 12px;
+            font-weight: 700;
+            font-size: 13px;
+            border-radius: 3px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+        .info-row {
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        .info-row strong {
+            color: #F39C12;
+        }
+        .message {
+            background: #e8f5e9;
+            border-left: 4px solid #4CAF50;
+            padding: 15px;
+            margin-top: 20px;
+            color: #2e7d32;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .footer {
+            background: #f9f9f9;
+            text-align: center;
+            padding: 20px;
+            font-size: 11px;
+            color: #777;
+            border-top: 1px solid #e0e0e0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <div style="font-size: 32px; font-weight: bold;">ARTESANO MARKET</div>
+            <h1>PEDIDO ENVIADO</h1>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="content">
+            <p>Hola <strong>{{ nombre_cliente }}</strong>,</p>
+
+            <p>
+                ¡Gracias por tu compra! Tu pedido ha sido enviado correctamente.
+            </p>
+
+            <div class="section-title">Información del Pedido</div>
+
+            <div class="info-row">
+                <strong>Número de Pedido:</strong> {{ numero_pedido }}
+            </div>
+
+            <div class="info-row">
+                <strong>Fecha del Pedido:</strong>
+                {% if fecha_venta %}
+                    {{ fecha_venta|localtime|date:"d/m/Y" }} a las {{ fecha_venta|localtime|time:"H:i" }}
+                {% else %}
+                    {% now "d/m/Y" %} a las {% now "H:i" %}
+                {% endif %}
+            </div>
+
+            <div class="info-row">
+                <strong>Método de Pago:</strong> {{ metodo_pago|default:"Transferencia Bancaria" }}
+            </div>
+
+            <div class="message">
+                ✓ Tu pedido ha sido enviado y está en camino. Te avisaremos cuando esté próximo a llegar.
+            </div>
+
+            <p style="margin-top: 20px; font-size: 14px;">
+                Si necesitas soporte, contáctanos en <strong>{{ email_soporte }}</strong>.
+            </p>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer">
+            Este correo fue generado automáticamente. No respondas a este mensaje.
+            <br>
+            © 2025 Artesano Market. Todos los derechos reservados.
+        </div>
+    </div>
+</body>
+</html>

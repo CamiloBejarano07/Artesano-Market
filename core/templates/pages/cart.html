@@ -1,0 +1,190 @@
+{% load static %}
+{% load currency_tags %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito de Compras | Arte Market</title>
+    <link rel="stylesheet" href="{% static 'css/cart.css' %}">
+    <link rel="icon" type="image/png" sizes="48x48" href="{% static 'images/icono_artesano.png' %}" /></head>
+<body>
+<header id="Header">
+    <img class="logo" src="{% static 'images/logo_artesano.png' %}" alt="Logo">
+        <nav class="navegacion">
+                {% if user_role %}
+                    {% if user_role|lower == 'vendedor' %}
+                        <a href="{% url 'dashboard_seller' %}">Inicio</a>
+                    {% elif user_role|lower == 'administrador' or user_role|lower == 'admin' %}
+                        <a href="{% url 'dashboard_admin' %}">Inicio</a>
+                    {% elif user_role|lower == 'cliente' %}
+                        <a href="{% url 'dashboard_cliente' %}">Inicio</a>
+                    {% else %}
+                        <a href="{% url 'inicio' %}">Inicio</a>
+                    {% endif %}
+                {% else %}
+                    <a href="{% url 'inicio' %}">Inicio</a>
+                {% endif %}
+        <a href="{% url 'catalog' %}">Catálogo</a>
+
+        {% if user_logged %}
+            <a href="{% url 'auth_logout' %}">Cerrar Sesión</a>
+        {% else %}
+            <a href="{% url 'login' %}">Iniciar Sesión</a>
+        {% endif %}
+
+        <a href="{% url 'help' %}">Contáctanos</a>
+    </nav>
+</header>
+
+<main>
+    <h1>Carrito de Compras</h1>
+
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if productos %}
+        <div class="cart-table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Imagen</th>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Precio Unitario</th>
+                        <th>Subtotal</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in productos %}
+                        <tr>
+                            <td>
+                                {% if item.producto.imagen %}
+                                    <img src="{{ MEDIA_URL }}{{ item.producto.imagen }}" alt="{{ item.producto.nombre }}" class="producto-imagen">
+                                {% else %}
+                                    <img src="{% static 'images/no-image.png' %}" alt="Sin imagen" class="producto-imagen">
+                                {% endif %}
+                            </td>
+                            <td class="producto-nombre">{{ item.producto.nombre }}</td>
+                            <td class="cantidad">{{ item.cantidad }}</td>
+                            <td class="precio">{{ item.producto.precio|format_cop }}</td>
+                            <td class="precio">{{ item.subtotal|format_cop }}</td>
+                                                        <td>
+                                                                <div style="display:flex; gap:0.5rem;">
+                                                                    <!-- Disminuir cantidad -->
+                                                                    <form method="post" action="{% url 'disminuir_carrito' item.producto.id_producto %}">
+                                                                        {% csrf_token %}
+                                                                        <button type="submit" class="btn btn-small">-</button>
+                                                                    </form>
+
+                                                                    <span style="align-self:center;">{{ item.cantidad }}</span>
+
+                                                                    <!-- Aumentar cantidad (usa agregar_carrito existente) -->
+                                                                    <form method="post" action="{% url 'agregar_carrito' item.producto.id_producto %}">
+                                                                        {% csrf_token %}
+                                                                        <button type="submit" class="btn btn-small">+</button>
+                                                                    </form>
+
+                                                                    <!-- Eliminar por completo -->
+                                                                    <form method="post" action="{% url 'eliminar_carrito' item.producto.id_producto %}">
+                                                                        {% csrf_token %}
+                                                                        <button type="submit" class="btn btn-eliminar">Eliminar</button>
+                                                                    </form>
+                                                                </div>
+                                                        </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="cart-summary">
+            <div class="summary-row">
+                <span class="summary-label">Subtotal:</span>
+                <span class="summary-value">{{ total|format_cop }}</span>
+            </div>
+            <div class="summary-row">
+                <span class="summary-label">Impuestos:</span>
+                <span class="summary-value">COP 0</span>
+            </div>
+            <div class="summary-row">
+                <span class="summary-label">Total:</span>
+                <span class="summary-value">{{ total|format_cop }}</span>
+            </div>
+        </div>
+
+        <div class="cart-actions">
+            <a href="{% url 'catalog' %}" class="btn-secundario">Continuar Comprando</a>
+            <a href="{% url 'checkout' %}" class="btn-primario">Proceder al Pago</a>
+        </div>
+    {% else %}
+        <div class="carrito-vacio">
+            <p>Tu carrito está vacío.</p>
+            <a href="{% url 'catalog' %}" class="btn-primario">Ir al Catálogo</a>
+        </div>
+    {% endif %}
+</main>
+
+<footer class="footer">
+  <ul class="social-icon">
+    <li class="icon-elem">
+      <a href="https://www.youtube.com/@ArtesanoMarket-06" class="icon"><ion-icon name="logo-youtube"></ion-icon></a>
+    </li>
+    <li class="icon-elem">
+      <a href="https://www.instagram.com/artek__06/" class="icon"><ion-icon name="logo-instagram"></ion-icon></a>
+    </li>
+    <li class="icon-elem">
+      <a href="https://wa.me/573009688222?text=Hola,%20quiero%20más%20información" class="icon"><ion-icon name="logo-whatsapp"></ion-icon></a>
+    </li>
+    <li class="icon-elem">
+      <a href="https://www.facebook.com/profile.php?id=61584617440121" class="icon"><ion-icon name="logo-facebook"></ion-icon></a>
+    </li>
+    <li class="icon-elem">
+      <a href="https://mail.google.com/mail/?view=cm&fs=1&to=artesanomarkett@gmail.com" class="icon"><ion-icon name="mail-outline"></ion-icon></a>
+    </li>
+  </ul>
+
+    <ul class="menu-footer">
+                <li class="menu-elem">
+                    {% if user_role %}
+                        {% if user_role|lower == 'vendedor' %}
+                            <a href="{% url 'dashboard_seller' %}" class="menu-icon-footer">Inicio</a>
+                        {% elif user_role|lower == 'administrador' or user_role|lower == 'admin' %}
+                            <a href="{% url 'dashboard_admin' %}" class="menu-icon-footer">Inicio</a>
+                        {% elif user_role|lower == 'cliente' %}
+                            <a href="{% url 'dashboard_cliente' %}" class="menu-icon-footer">Inicio</a>
+                        {% else %}
+                            <a href="{% url 'inicio' %}" class="menu-icon-footer">Inicio</a>
+                        {% endif %}
+                    {% else %}
+                        <a href="{% url 'inicio' %}" class="menu-icon-footer">Inicio</a>
+                    {% endif %}
+                </li>
+        <li class="menu-elem"><a href="{% url 'catalog' %}" class="menu-icon-footer">Catálogo</a></li>
+
+        {% if user_logged %}
+            <li class="menu-elem"><a href="{% url 'auth_logout' %}" class="menu-icon-footer">Cerrar Sesión</a></li>
+        {% else %}
+            <li class="menu-elem"><a href="{% url 'login' %}" class="menu-icon-footer">Iniciar Sesión</a></li>
+        {% endif %}
+
+        <li class="menu-elem"><a href="{% url 'help' %}" class="menu-icon-footer">Contáctanos</a></li>
+    </ul>
+
+    <p class="text-footer">2025 | Todos los derechos reservados</p>
+</footer>
+
+<script src="{% static 'js/script.js' %}"></script>
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+{%load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artesano Admin</title>
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+    <link rel="icon" type="image/png" sizes="48x48" href="{% static 'images/icono_artesano.png' %}" />
+</head>
+<body>
+<header id="Header">
+    <img class="logo" src="{% static 'images/logo_artesano.png' %}" alt="Logo Artesano">
+    <nav class="navegacion">
+        <a href="{% url 'dashboard_admin' %}">Inicio</a>
+        <a href="{% url 'admin_settings' %}">Configuraciones</a>
+
+        <form id="logout-form" action="{% url 'auth_logout' %}" method="post" style="display: none;">
+            {% csrf_token %}
+        </form>
+        <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+            Cerrar Sesión
+        </a>
+    </nav>
+</header>
+
+<!-- MENSAJES -->
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<main>
+    <section class="inicio">
+        <h1>Bienvenido Administrador</h1>
+        <p>Opciones exclusivas para administrar la plataforma.</p>
+            <a href="{% url 'admin_settings' %}" class="btn-settings">Ir a Configuraciones</a>
+
+        <div>
+
+        </div>
+    </section>
+</main>
+
+<footer class="footer">
+    <ul class="social-icon">
+        <li class="icon-elem">
+        <a href="https://www.youtube.com/@ArtesanoMarket-06" class="icon"><ion-icon name="logo-youtube"></ion-icon></a>
+        </li>
+        <li class="icon-elem">
+        <a href="https://www.instagram.com/artek__06/" class="icon"><ion-icon name="logo-instagram"></ion-icon></a>
+        </li>
+        <li class="icon-elem">
+        <a href="https://wa.me/573009688222?text=Hola,%20quiero%20más%20información" class="icon"><ion-icon name="logo-whatsapp"></ion-icon></a>
+        </li>
+        <li class="icon-elem">
+        <a href="https://www.facebook.com/profile.php?id=61584617440121" class="icon"><ion-icon name="logo-facebook"></ion-icon></a>
+        </li>
+        <li class="icon-elem">
+        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=artesanomarkett@gmail.com" class="icon"><ion-icon name="mail-outline"></ion-icon></a>
+        </li>
+    </ul>
+
+    <ul class="menu-footer">
+        <li class="menu-elem"><a href="{% url 'dashboard_admin' %}" class="menu-icon-footer">Inicio</a></li>
+        <li class="menu-elem"><a href="{% url 'admin_settings' %}" class="menu-icon-footer">Configuraciones</a></li>
+            <a href="#" class="menu-icon-footer"
+               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                Cerrar Sesión
+            </a>
+        </li>
+    </ul>
+
+    <p class="text-footer">2025 | Todos los derechos reservados</p>
+</footer>
+
+<script src="{% static 'js/scripts.js' %}"></script>
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</body>
+</html>

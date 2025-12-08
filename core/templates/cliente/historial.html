@@ -1,0 +1,189 @@
+{% load static %}
+{% load currency_tags %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Historial de pedidos - Artesano</title>
+  <link rel="stylesheet" href="{% static 'css/historial.css' %}">
+  <link rel="icon" type="image/png" sizes="48x48" href="{% static 'images/icono_artesano.png' %}" />
+</head>
+
+<body>
+
+<header id="Header">
+  <img class="logo" src="{% static 'images/logo_artesano.png' %}" alt="Logo Artesano">
+
+  <nav class="navegacion">
+    <a href="{% url 'dashboard_cliente' %}">Inicio</a>
+    <a href="{% url 'catalog' %}">Catálogo</a>
+    <a href="{% url 'help' %}">Contactanos</a>
+    <a href="{% url 'cliente_settings' %}">Configuraciones</a>
+
+    {% if user_logged %}
+      <form id="logout-form" action="{% url 'auth_logout' %}" method="post" style="display:none;">{% csrf_token %}</form>
+      <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Cerrar Sesión</a>
+    {% else %}
+      <a href="{% url 'login' %}">Iniciar Sesión</a>
+    {% endif %}
+  </nav>
+</header>
+
+
+<main class="container">
+
+  <h1>Mis pedidos</h1>
+
+  {% if ventas %}
+    <div class="orders-grid">
+
+      {% for v in ventas %}
+        <div class="order-card">
+
+          <div class="order-top">
+            <h3>Pedido #{{ v.order_number }}</h3>
+            <span class="order-status">
+              {% if v.estado == 'Enviado' %}
+                Enviado ✓
+              {% else %}
+                Pendiente de envío
+              {% endif %}
+            </span>
+          </div>
+
+          <div class="order-body">
+
+            <div class="order-image-wrap">
+              {% if v.main_image %}
+                <img src="{{ MEDIA_URL }}{{ v.main_image }}" class="order-image" alt="Imagen pedido">
+              {% else %}
+                <img src="{% static 'images/default_product.png' %}" class="order-image" alt="Sin imagen">
+              {% endif %}
+            </div>
+
+            <div class="order-info">
+              <p><strong>Fecha:</strong> {{ v.fecha_venta }}</p>
+              <p><strong>Dirección:</strong> {{ v.direccion_envio }}</p>
+              <p><strong>Total:</strong> {{ v.total_venta|format_cop }}</p>
+              <button class="btn-detalle" data-order="{{ forloop.counter0 }}">
+                Ver detalles
+              </button>
+            </div>
+
+          </div>
+
+          <div class="order-details" id="details-{{ forloop.counter0 }}" style="display:none;">
+            <h4>Productos comprados</h4>
+            <ul class="order-products-list">
+
+              {% for p in v.productos %}
+              <li class="product-item">
+                <img src="{{ MEDIA_URL }}{{ p.imagen }}" width="70" alt="{{ p.nombre }}">
+                <div class="product-meta">
+                  <div class="product-name">{{ p.nombre }}</div>
+                  <div class="product-quantity">Cantidad: {{ p.cantidad }} unidades</div>
+                  <div class="product-price">Precio unitario: {{ p.precio_unitario|format_cop }}</div>
+                  <div class="product-total">Total línea: {{ p.total_linea|format_cop }}</div>
+                </div>
+              </li>
+              {% endfor %}
+
+            </ul>
+            <div class="order-summary">
+              <h5>Resumen del pedido</h5>
+              <p><strong>Total del pedido:</strong> {{ v.total_venta|format_cop }}</p>
+              <p>
+                <strong>Estado de envío:</strong>
+                {% if v.estado == 'Enviado' %}
+                  <span style="color: #27AE60; font-weight: bold;">✓ Enviado</span>
+                {% else %}
+                  <span style="color: #F39C12; font-weight: bold;">⏳ Pendiente de envío</span>
+                {% endif %}
+              </p>
+            </div>
+          </div>
+
+        </div>
+      {% endfor %}
+
+    </div>
+
+  {% else %}
+    <p>No tienes pedidos todavía.</p>
+  {% endif %}
+
+</main>
+
+
+<footer class="footer">
+  <ul class="social-icon">
+    <li class="icon-elem">
+      <a href="https://www.youtube.com/@ArtesanoMarket-06" class="icon"><ion-icon name="logo-youtube"></ion-icon></a>
+    </li>
+    <li class="icon-elem">
+      <a href="https://www.instagram.com/artek__06/" class="icon"><ion-icon name="logo-instagram"></ion-icon></a>
+    </li>
+    <li class="icon-elem">
+      <a href="https://wa.me/573009688222?text=Hola,%20quiero%20más%20información" class="icon"><ion-icon name="logo-whatsapp"></ion-icon></a>
+    </li>
+    <li class="icon-elem">
+      <a href="https://www.facebook.com/profile.php?id=61584617440121" class="icon"><ion-icon name="logo-facebook"></ion-icon></a>
+    </li>
+    <li class="icon-elem">
+      <a href="https://mail.google.com/mail/?view=cm&fs=1&to=artesanomarkett@gmail.com" class="icon"><ion-icon name="mail-outline"></ion-icon></a>
+    </li>
+  </ul>
+
+  <ul class="menu-footer">
+    <li class="menu-elem"><a href="{% url 'dashboard_cliente' %}" class="menu-icon-footer">Inicio</a></li>
+
+    {% if request.session.user_id %}
+      <li class="menu-elem"><a href="{% url 'cliente_settings' %}" class="menu-icon-footer">Configuraciones</a></li>
+      <li class="menu-elem"><a href="{% url 'catalog' %}" class="menu-icon-footer">Catálogo</a></li>
+      <li class="menu-elem"><a href="{% url 'help' %}" class="menu-icon-footer">Contáctanos</a></li>
+      <form id="logout-form-footer" action="{% url 'auth_logout' %}" method="post" style="display:none;">
+        {% csrf_token %}
+      </form>
+      <li class="menu-elem">
+        <a href="#" class="menu-icon-footer"
+           onclick="event.preventDefault(); document.getElementById('logout-form-footer').submit();">
+          Cerrar Sesión
+        </a>
+      </li>
+    {% endif %}
+
+
+  </ul>
+
+  <p class="text-footer">2025 | Todos los derechos reservados</p>
+</footer>
+
+<script src="{% static 'assets/js/scripts.js' %}"></script>
+<script src="{% static 'assets/js/admin_seller.js' %}"></script>
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function(){
+    document.querySelectorAll('.btn-detalle').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var idx = this.dataset.order;
+        var panel = document.getElementById('details-' + idx);
+
+        if (panel.style.display === 'none'){
+          panel.style.display = 'block';
+          this.textContent = 'Ocultar detalles';
+        } else {
+          panel.style.display = 'none';
+          this.textContent = 'Ver detalles';
+        }
+      });
+    });
+  });
+</script>
+
+</body>
+</html>

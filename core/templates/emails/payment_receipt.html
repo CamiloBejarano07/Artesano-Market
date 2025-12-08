@@ -1,0 +1,468 @@
+{%load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprobante de Pago</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/icono_artesano.png' %}" />
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #F39C12 0%, #E67E22 100%);
+            padding: 30px 20px;
+            text-align: center;
+            color: white;
+            border-bottom: 4px solid #D35400;
+        }
+        
+        
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-top: 10px;
+            letter-spacing: 0.5px;
+        }
+        
+        .header p {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+        
+        .content {
+            padding: 30px 20px;
+        }
+        
+        .greeting {
+            font-size: 16px;
+            margin-bottom: 25px;
+            color: #333;
+        }
+        
+        .greeting strong {
+            color: #F39C12;
+        }
+        
+        .section {
+            margin-bottom: 25px;
+        }
+        
+        .section-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #fff;
+            background-color: #F39C12;
+            padding: 10px 12px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-radius: 3px;
+        }
+        
+        .info-grid {
+            display: table;
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        
+        .info-row {
+            display: table-row;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .info-label {
+            display: table-cell;
+            font-weight: 600;
+            color: #666;
+            width: 40%;
+            padding: 8px 0;
+            padding-right: 10px;
+        }
+        
+        .info-value {
+            display: table-cell;
+            color: #333;
+            padding: 8px 0;
+            word-break: break-word;
+        }
+        
+        .info-value.highlight {
+            color: #F39C12;
+            font-weight: 600;
+        }
+        
+        .products-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+        
+        .products-table th {
+            background-color: #f9f9f9;
+            padding: 10px 8px;
+            text-align: left;
+            font-weight: 700;
+            color: #333;
+            border-bottom: 2px solid #F39C12;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+        
+        .products-table td {
+            padding: 12px 8px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .products-table tr:hover {
+            background-color: #fafafa;
+        }
+        
+        .product-name {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .product-qty {
+            text-align: center;
+            color: #666;
+        }
+        
+        .product-price {
+            text-align: right;
+            color: #666;
+        }
+        
+        .product-total {
+            text-align: right;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .summary {
+            background-color: #f9f9f9;
+            padding: 15px 12px;
+            border-radius: 3px;
+            margin-top: 15px;
+            border-left: 4px solid #F39C12;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+        
+        .summary-row.total {
+            border-top: 2px solid #e0e0e0;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+        
+        .summary-row.total .label {
+            font-weight: 700;
+            font-size: 14px;
+        }
+        
+        .summary-row.total .value {
+            font-weight: 700;
+            font-size: 14px;
+            color: #F39C12;
+        }
+        
+        .summary-row .label {
+            color: #666;
+            font-weight: 600;
+        }
+        
+        .summary-row .value {
+            color: #333;
+            text-align: right;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+        
+        .divider {
+            border-top: 1px dashed #d0d0d0;
+            margin: 20px 0;
+        }
+        
+        .message {
+            background-color: #e8f5e9;
+            border-left: 4px solid #4CAF50;
+            padding: 12px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #2e7d32;
+            border-radius: 3px;
+        }
+        
+        .footer {
+            background-color: #f9f9f9;
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid #e0e0e0;
+            font-size: 11px;
+            color: #999;
+        }
+        
+        .footer-contact {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .footer-contact strong {
+            color: #333;
+        }
+        
+        .footer-legal {
+            margin-top: 10px;
+            font-style: italic;
+            color: #aaa;
+        }
+        
+        .qr-section {
+            text-align: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .order-number-highlight {
+            background-color: #fff3e0;
+            padding: 8px 12px;
+            border-radius: 3px;
+            display: inline-block;
+            margin: 10px 0;
+            border: 1px solid #ffe0b2;
+        }
+        
+        @media (max-width: 600px) {
+            .email-container {
+                margin: 0;
+                border: none;
+                border-radius: 0;
+            }
+            
+            .header {
+                padding: 20px 15px;
+            }
+            
+            .content {
+                padding: 20px 15px;
+            }
+            
+            .info-grid {
+                font-size: 12px;
+            }
+            
+            .products-table {
+                font-size: 12px;
+            }
+            
+            .products-table th,
+            .products-table td {
+                padding: 8px 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- HEADER -->
+        <div class="header">
+            <div class="logo-container">
+                <div style="font-size: 32px; font-weight: bold; color: white; letter-spacing: 1px;">ARTESANO MARKET</div>
+            </div>
+            <h1>COMPROBANTE DE PAGO</h1>
+            <p>Transacción en línea - Artesano Market</p>
+        </div>
+        
+        <!-- CONTENT -->
+        <div class="content">
+            <!-- Greeting -->
+            <div class="greeting">
+                ¡Hola <strong>{{ nombre_cliente }}</strong>!
+                <br>
+                Gracias por tu compra en Artesano Market. Tu pago ha sido procesado exitosamente.
+            </div>
+            
+            <!-- Información de la Transacción -->
+            <div class="section">
+                <div class="section-title">Información de la Transacción</div>
+                <div class="info-grid">
+                    <div class="info-row">
+                        <div class="info-label">Número de Pedido:</div>
+                        <div class="info-value order-number-highlight"><strong>{{ numero_pedido }}</strong></div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Fecha y Hora:</div>
+                        <div class="info-value">{% if fecha_venta %}{{ fecha_venta|date:"d/m/Y" }} a las {{ fecha_venta|time:"H:i" }}{% else %}En este momento{% endif %}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Método de Pago:</div>
+                        <div class="info-value">{{ metodo_pago|default:"Transferencia Bancaria" }}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Estado:</div>
+                        <div class="info-value"><span class="status-badge">✓ PAGADO</span></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Datos del Cliente -->
+            <div class="section">
+                <div class="section-title">Pagado Por</div>
+                <div class="info-grid">
+                    <div class="info-row">
+                        <div class="info-label">Nombre:</div>
+                        <div class="info-value">{{ nombre_cliente }}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Email:</div>
+                        <div class="info-value">{{ email_cliente }}</div>
+                    </div>
+                    {% if direccion_envio %}
+                    <div class="info-row">
+                        <div class="info-label">Dirección de Envío:</div>
+                        <div class="info-value">{{ direccion_envio }}</div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Información del Comercio -->
+            <div class="section">
+                <div class="section-title">Comercio</div>
+                <div class="info-grid">
+                    <div class="info-row">
+                        <div class="info-label">Nombre:</div>
+                        <div class="info-value">Artesano Market</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Correo de Contacto:</div>
+                        <div class="info-value">{{ email_soporte }}</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Detalle de Productos -->
+            <div class="section">
+                <div class="section-title">Detalle de Compra</div>
+                {% if productos %}
+                <table class="products-table">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th style="text-align: center; width: 60px;">Cantidad</th>
+                            <th style="text-align: right; width: 80px;">Precio Unit.</th>
+                            <th style="text-align: right; width: 80px;">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for producto in productos %}
+                        <tr>
+                            <td class="product-name">{{ producto.nombre }}</td>
+                            <td class="product-qty">{{ producto.cantidad }}</td>
+                            <td class="product-price">${{ producto.precio_unitario|floatformat:0|default:"0" }}</td>
+                            <td class="product-total">${{ producto.subtotal|floatformat:0|default:"0" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div style="padding: 15px; background-color: #f9f9f9; border-radius: 3px; color: #666; text-align: center;">
+                    No hay productos en este comprobante.
+                </div>
+                {% endif %}
+                
+                <!-- Resumen -->
+                <div class="summary">
+                    <div class="summary-row">
+                        <div class="label">Subtotal:</div>
+                        <div class="value">${{ subtotal|floatformat:0|default:"0" }}</div>
+                    </div>
+                    {% if descuento %}
+                    <div class="summary-row">
+                        <div class="label">Descuento:</div>
+                        <div class="value">-${{ descuento|floatformat:0|default:"0" }}</div>
+                    </div>
+                    {% endif %}
+                    <div class="summary-row total">
+                        <div class="label">TOTAL PAGADO:</div>
+                        <div class="value">${{ total|floatformat:0|default:"0" }} COP</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Mensaje de confirmación -->
+            <div class="message">
+                ✓ Tu pedido ha sido confirmado y está siendo procesado. Recibirás actualizaciones de tu envío en breve.
+            </div>
+            
+            <!-- Divider -->
+            <div class="divider"></div>
+            
+            <!-- Próximos pasos -->
+            <div class="section">
+                <div class="section-title">Próximos Pasos</div>
+                <div style="font-size: 13px; color: #555; line-height: 1.8;">
+                    <p>1. Tu pedido será preparado por nuestro equipo en las próximas 24 horas.</p>
+                    <p style="margin-top: 8px;">2. Recibirás un email con el número de seguimiento una vez sea enviado.</p>
+                    <p style="margin-top: 8px;">3. Si tienes preguntas, no dudes en contactarnos.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- FOOTER -->
+        <div class="footer">
+            <div class="footer-contact">
+                <strong>¿Preguntas?</strong> Contáctanos en <strong>{{ email_soporte }}</strong>
+            </div>
+            <div class="footer-legal">
+                Este es un comprobante generado automáticamente. Por favor, no respondas a este correo.
+                <br>
+                Conserva este comprobante para tus registros.
+            </div>
+            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e0e0e0; color: #999; font-size: 10px;">
+                © 2025 Artesano Market. Todos los derechos reservados.
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,462 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+
+body{
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+
+}
+
+/*header*/
+
+header {
+    height: auto;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 5%;
+    padding-right: 5%;
+    box-sizing: border-box;
+    transition: 0.5s;
+    z-index: 1000;
+}
+
+
+.logo{
+    width: 70px;
+    height: 70px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    border-radius: 35px;
+}
+
+.navegacion a, #button_cerrar_sesion{
+    position: relative;
+    font-size: 1.35rem;
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    margin-left: 40px;
+    background-color: none;
+}
+
+.navegacion a::after{
+    content: "";
+    position: absolute;
+    width: 100%;
+    bottom: -6px;
+    left: 0;
+    height: 2px;
+    background: #F39C12;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform .4s;
+    
+}
+
+.navegacion a:hover::after{
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+a:hover{
+    color: #F39C12;
+}
+
+/*inicio*/
+
+.inicio {
+    margin: 0 auto;
+    display: block;
+    padding-top: 150px;
+    padding-bottom: 150px;
+    justify-content: center;
+    text-align: center;
+    height: 500px;
+    background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.4)), url(../images/fondo_inicio.jpg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.inicio h1 {
+    font-size: 80px;
+    padding-top: 50px;
+    color: white;
+}
+
+.inicio p {
+    font-size: 30px;
+    margin-top: -40px;
+    padding-bottom: 20px;
+    color: white;
+}
+
+
+.inicio button {
+    background-color: #F39C12;
+    font-size: 20px;
+    border-radius: 10px ;
+    padding: 10px;
+    display: block;
+    text-align: center;
+    margin: auto;
+    margin-top: 20px;
+    margin-bottom: 80px;
+    color: #000000;
+    text-decoration: none;
+    transition: transform 0.5s ease;
+    cursor: pointer;
+}
+
+.inicio button:hover {
+    color: #ffffff;
+    background-color: #D35400;
+    transform: scale(1.05);
+    text-decoration: none;
+}
+
+.buttom-home1 {
+    position: fixed;
+    bottom: 10px;
+    right: 20px;
+    cursor: pointer;
+}
+
+/*Productos destacados*/
+
+.productos-destacados {
+    margin: 0 auto;
+    height: auto;
+    padding-left: 8%;
+    padding-right: 8%;
+    padding-bottom: 60px;
+    background-color: #F7F7F7;
+}
+
+.productos-destacados h2{
+    text-align: center;
+    font-size: 50px;
+    padding-top: 90px;
+    margin-top: 0;
+    margin-bottom: 90px;
+}
+
+.splide__slide{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.splide__slide img{
+    width: 100%;
+    max-width: 550px;
+    height: 420px;
+    object-fit: cover;
+    border-radius: 28px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.splide__slide img:hover{
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 14px 30px rgba(0,0,0,0.2);
+}
+
+.splide__slide p{
+    text-align: center;
+}
+
+.slide-info{
+    position: absolute;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.6);
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 20px;
+    text-align: center;
+    width: calc(100% - 40px);
+    max-width: 360px;
+    font-size: 0.95rem;
+}
+
+.slide-name{
+    margin: 0;
+    font-weight: 600;
+}
+
+.slide-price{
+    margin: 0;
+    font-weight: 500;
+    font-size: 0.9rem;
+    opacity: 0.95;
+}
+
+/* Splide controls styling */
+.splide__arrow{
+    background: #fff;
+    color: #333;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.splide__arrow svg{ width:18px; height:18px; }
+
+.splide__pagination{
+    bottom: 8px;
+}
+
+.splide__pagination__page{
+    background: rgba(255,255,255,0.9);
+    border: 1px solid rgba(0,0,0,0.08);
+}
+
+.splide__slide.no-destacados .no-destacados-msg{
+    padding: 40px;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+    text-align: center;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+
+/* linea morada*/
+
+.btn-settings {
+    background-color: #F39C12;
+    font-size: 20px;
+    border-radius: 10px;
+    padding: 10px 20px;
+    color: #000000;
+    text-decoration: none;
+    transition: transform 0.5s ease;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.btn-settings:hover {
+    background-color: #D35400;
+    color: #ffffff;
+    transform: scale(1.05);
+}
+
+
+/* footer */
+
+footer{
+    position: relative;
+    max-width: 1920px;
+    background: #000000;
+    min-height: 100px;
+    padding: 20px 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.social-icon{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    margin: 10px 5px;
+    flex-wrap: wrap;
+    margin-right: 2%;
+}
+
+.icon-elem{
+    list-style: none;
+}
+
+.icon{
+    color: white;
+    font-size: 32px;
+    display: inline-block;
+    margin: 0 10px;
+    transition: 0.5s;
+}
+
+.icon:hover{
+    transform: translateY(-10px);
+}
+
+.menu-footer{
+    display: flex;
+    justify-content: center;
+    position: relative;
+    align-items: center;
+    margin: 10px 0;
+    flex-wrap: wrap;
+    margin-right: 2%;
+}
+
+.menu-elem{
+    list-style: none;
+}
+
+.menu-icon-footer{
+    color: white;
+    font-size: 20px;
+    display: inline-block;
+    text-decoration: none;
+    margin: 5px 10px;
+    opacity: 0.75;
+    transition: 0.3s;
+}
+
+.menu-icon-footer:hover{
+    opacity: 1;
+}
+
+.text-footer{
+    color: white;
+    text-align: center;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    font-size: 20px;
+}
+
+/* responsive */
+
+@media (max-width: 576px) {
+    header {
+        flex-direction: column;
+        text-align: center;
+        padding: 10px;
+    }
+
+    .logo {
+        font-size: 1.8rem;
+        margin-bottom: 10px;
+    }
+
+    .navegacion a {
+        font-size: 1rem;
+        margin: 10px 0;
+    }
+
+    .inicio {
+        padding-top: 100px;
+        padding-bottom: 100px;
+        height: auto;
+    }
+
+    .inicio h1 {
+        font-size: 50px;
+    }
+
+    .inicio p {
+        font-size: 18px;
+    }
+
+    .inicio button {
+        font-size: 16px;
+        padding: 8px;
+    }
+
+    .productos-destacados {
+        height: auto;
+        padding: 20px;
+    }
+
+    .productos-destacados h2 {
+        font-size: 30px;
+        margin-bottom: 50px;
+    }
+
+    .splide__slide img {
+        width: 100%;
+        height: auto;
+        border-radius: 20px;
+    }
+
+    footer {
+        padding: 10px 20px;
+    }
+
+    .icon {
+        font-size: 24px;
+        margin: 5px;
+    }
+
+    .menu-icon-footer {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        text-align: center;
+        padding: 10px 20px;
+    }
+
+    .logo {
+        font-size: 2rem;
+        margin-bottom: 15px;
+    }
+
+    .navegacion a {
+        font-size: 1.2rem;
+        margin: 0 10px;
+    }
+
+    .inicio h1 {
+        font-size: 60px;
+    }
+
+    .inicio p {
+        font-size: 20px;
+    }
+
+    .productos-destacados h2 {
+        font-size: 40px;
+    }
+
+    .splide__slide img {
+        width: 90%;
+        height: auto;
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 1444px) {
+    header {
+        padding: 0 8%;
+    }
+
+    .inicio {
+        padding-top: 150px;
+        padding-bottom: 150px;
+    }
+
+    .productos-destacados h2 {
+        font-size: 50px;
+    }
+
+    .splide__slide img {
+        margin: 0 auto;
+        width: 95%;
+        height: auto;
+    }
+
+    footer {
+        padding: 20px 50px;
+    }
+}

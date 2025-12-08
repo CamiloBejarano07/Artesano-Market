@@ -1,0 +1,174 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Crear Categoría</title>
+  <link rel="stylesheet" href="{% static 'css/admin_settings.css' %}">
+  <link rel="icon" type="image/png" sizes="48x48" href="{% static 'images/icono_artesano.png' %}" />
+  <style>
+    .form-container {
+      max-width: 600px;
+      margin: 30px auto;
+      padding: 30px;
+      background-color: #f8f9fa;
+      border-radius: 5px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #003d5c;
+    }
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 3px;
+      font-size: 1em;
+      box-sizing: border-box;
+    }
+    .form-group textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-block;
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+    .btn-primary {
+      background-color: #fd9d3f;
+      color: white;
+    }
+    .btn-primary:hover {
+      background-color: #e08a2d;
+      transform: scale(1.05);
+    }
+    .btn-secondary {
+      background-color: #F39C12;
+      color: white;
+    }
+    .btn-secondary:hover {
+      background-color: #D35400;
+      transform: scale(1.05);
+    }
+    .alert {
+      padding: 12px 15px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+    }
+    .alert-danger {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+  </style>
+</head>
+<body>
+
+<header id="Header">
+  <img class="logo" src="{% static 'images/logo_artesano.png' %}" alt="Logo Artesano">
+  <nav class="navegacion">
+    <a href="{% url 'dashboard_admin' %}">Inicio</a>
+    <a href="{% url 'admin_settings' %}">Configuraciones</a>
+    <form id="logout-form" action="{% url 'auth_logout' %}" method="post" style="display:none;">
+      {% csrf_token %}
+    </form>
+    <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+      Cerrar Sesión
+    </a>
+  </nav>
+</header>
+
+<main>
+  <section class="admin-settings">
+    <h1>Crear Nueva Categoría</h1>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <div class="form-container">
+      <form method="post">
+        {% csrf_token %}
+
+        <div class="form-group">
+          <label for="nombre">Nombre de la Categoría *</label>
+          <input type="text" id="nombre" name="nombre_categoria" required placeholder="Ej: Electrónica, Ropa, etc.">
+        </div>
+
+        <div class="form-group">
+          <label for="descripcion">Descripción (Opcional)</label>
+          <textarea id="descripcion" name="descripcion" placeholder="Describe la categoría..."></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Crear Categoría</button>
+          <a href="{% url 'listar_categorias_admin' %}" class="btn btn-secondary">Cancelar</a>
+        </div>
+      </form>
+    </div>
+
+  </section>
+</main>
+
+<footer class="footer">
+    <ul class="social-icon">
+        <li class="icon-elem">
+        <a href="https://www.youtube.com/@ArtesanoMarket-06" class="icon"><ion-icon name="logo-youtube"></ion-icon></a>
+        </li>
+        <li class="icon-elem">
+        <a href="https://www.instagram.com/artek__06/" class="icon"><ion-icon name="logo-instagram"></ion-icon></a>
+        </li>
+        <li class="icon-elem">
+        <a href="https://wa.me/573009688222?text=Hola,%20quiero%20más%20información" class="icon"><ion-icon name="logo-whatsapp"></ion-icon></a>
+        </li>
+        <li class="icon-elem">
+        <a href="https://www.facebook.com/profile.php?id=61584617440121" class="icon"><ion-icon name="logo-facebook"></ion-icon></a>
+        </li>
+        <li class="icon-elem">
+        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=artesanomarkett@gmail.com" class="icon"><ion-icon name="mail-outline"></ion-icon></a>
+        </li>
+    </ul>
+
+    <ul class="menu-footer">
+        <li class="menu-elem"><a href="{% url 'dashboard_admin' %}" class="menu-icon-footer">Inicio</a></li>
+        <li class="menu-elem"><a href="{% url 'admin_settings' %}" class="menu-icon-footer">Configuraciones</a></li>
+            <a href="#" class="menu-icon-footer"
+               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                Cerrar Sesión
+            </a>
+        </li>
+    </ul>
+
+    <p class="text-footer">2025 | Todos los derechos reservados</p>
+</footer>
+
+<script src="{% static 'js/scripts.js' %}"></script>
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</body>
+</html>

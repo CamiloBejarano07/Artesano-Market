@@ -1,0 +1,137 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enviar Correos Masivos</title>
+    <link rel="stylesheet" href="{% static 'css/admin_correo.css' %}">
+    <link rel="icon" type="image/png" sizes="48x48" href="{% static 'images/icono_artesano.png' %}" />
+
+</head>
+<body>
+<header id="Header">
+    <img class="logo" src="{% static 'images/logo_artesano.png' %}" alt="Logo Artesano">
+    <nav class="navegacion">
+        <a href="{% url 'dashboard_admin' %}">Inicio</a>
+        <a href="{% url 'admin_settings' %}">Configuraciones</a>
+
+        <!-- Logout -->
+        <form id="logout-form" action="{% url 'auth_logout' %}" method="post" style="display: none;">
+            {% csrf_token %}
+        </form>
+        <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+            Cerrar Sesión
+        </a>
+    </nav>
+</header>
+
+<main>
+    <section class="admin-correos">
+        <h1>Enviar Correos Masivos a Vendedores</h1>
+
+        <!-- Mensajes flash -->
+        {% if messages %}
+            {% for message in messages %}
+                <p class="message {% if message.tags %}message-{{ message.tags }}{% endif %}">
+                    {{ message }}
+                </p>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Lista de correos -->
+        <div>
+            <h3>Vendedores registrados:</h3>
+
+            {% if correos|length == 0 %}
+                <p>No hay vendedores con correo registrado.</p>
+            {% else %}
+                <label><input type="checkbox" id="select-all"> Seleccionar todo</label>
+
+                <form action="{% url 'enviar_correos_masivos' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <ul>
+                        {% for correo in correos %}
+                            <li>
+                                <label>
+                                    <input type="checkbox" name="destinatarios" value="{{ correo }}" checked>
+                                    <span>{{ correo }}</span>
+                                </label>
+                            </li>
+                        {% endfor %}
+                    </ul>
+
+                    <div>
+                        <label for="asunto">Asunto:</label>
+                        <input type="text" id="asunto" name="asunto" required>
+                    </div>
+
+                    <div>
+                        <label for="mensaje">Mensaje:</label>
+                        <textarea id="mensaje" name="mensaje" rows="6" required></textarea>
+                    </div>
+
+                    <div>
+                        <label for="archivo">Adjuntar archivo (PDF o CSV):</label>
+                        <input type="file" id="archivo" name="archivo" accept=".pdf,.csv">
+                    </div>
+
+                    <button type="submit" class="btn">Enviar Correos</button>
+                </form>
+            {% endif %}
+        </div>
+        <div class="footer-actions">
+            <a href="{% url 'admin_settings' %}" class="btn btn-back">Volver a Configuraciones</a>
+        </div>
+    </section>
+</main>
+
+<footer class="footer">
+    <ul class="social-icon">
+        <li class="icon-elem">
+        <a href="https://www.youtube.com/@ArtesanoMarket-06" class="icon"><ion-icon name="logo-youtube"></ion-icon></a>
+        </li>
+        <li class="icon-elem">
+        <a href="https://www.instagram.com/artek__06/" class="icon"><ion-icon name="logo-instagram"></ion-icon></a>
+        </li>
+        <li class="icon-elem">
+        <a href="https://wa.me/573009688222?text=Hola,%20quiero%20más%20información" class="icon"><ion-icon name="logo-whatsapp"></ion-icon></a>
+        </li>
+        <li class="icon-elem">
+        <a href="https://www.facebook.com/profile.php?id=61584617440121" class="icon"><ion-icon name="logo-facebook"></ion-icon></a>
+        </li>
+        <li class="icon-elem">
+        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=artesanomarkett@gmail.com" class="icon"><ion-icon name="mail-outline"></ion-icon></a>
+        </li>
+    </ul>
+
+    <ul class="menu-footer">
+        <li class="menu-elem"><a href="{% url 'dashboard_admin' %}" class="menu-icon-footer">Inicio</a></li>
+        <li class="menu-elem"><a href="{% url 'admin_settings' %}" class="menu-icon-footer">Configuraciones</a></li>
+            <a href="#" class="menu-icon-footer"
+               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                Cerrar Sesión
+            </a>
+        </li>
+    </ul>
+
+    <p class="text-footer">2025 | Todos los derechos reservados</p>
+</footer>
+
+<script src="{% static 'js/scripts.js' %}"></script>
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const selectAll = document.getElementById('select-all');
+        if (!selectAll) return;
+        selectAll.addEventListener('change', function () {
+            const checkboxes = document.querySelectorAll('input[name="destinatarios"]');
+            checkboxes.forEach(cb => cb.checked = selectAll.checked);
+        });
+    });
+</script>
+</body>
+</html>

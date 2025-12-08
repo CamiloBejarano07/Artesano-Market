@@ -1,0 +1,201 @@
+{% load static %}
+{% load currency_tags %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Catálogo</title>
+  <link rel="stylesheet" href="{% static 'css/catalog.css' %}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <link rel="icon" type="image/png" sizes="48x48" href="{% static 'images/icono_artesano.png' %}" /></head>
+<body>
+
+<header id="Header">
+  <img class="logo" src="{% static 'images/logo_artesano.png' %}" alt="Logo">
+  <nav class="navegacion">
+    {% if user_role %}
+      {% if user_role|lower == 'vendedor' %}
+        <a href="{% url 'dashboard_seller' %}">Inicio</a>
+      {% elif user_role|lower == 'administrador' or user_role|lower == 'admin' %}
+        <a href="{% url 'dashboard_admin' %}">Inicio</a>
+      {% elif user_role|lower == 'cliente' %}
+        <a href="{% url 'dashboard_cliente' %}">Inicio</a>
+      {% else %}
+        <a href="{% url 'inicio' %}">Inicio</a>
+      {% endif %}
+    {% else %}
+      <a href="{% url 'inicio' %}">Inicio</a>
+    {% endif %}
+    {% if user_logged %}
+      <a href="{% url 'cliente_settings' %}">Configuraciones</a>
+    {% endif %}
+    {% if user_logged %}
+      <a href="{% url 'auth_logout' %}">Cerrar Sesión</a>
+    {% else %}
+      <a href="{% url 'login' %}">Iniciar Sesión</a>
+    {% endif %}
+    <a href="{% url 'help' %}">Contáctanos</a>
+  </nav>
+</header>
+
+<main>
+  <!-- Sección de categorías -->
+  <section class="categorias-section">
+    <h1>Categorías</h1>
+    <!-- Barra de búsqueda y filtros (insertada aquí según petición) -->
+    <div class="filtros-barra" role="region" aria-label="Barra de filtros">
+      <form method="get" id="formFiltros" style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;width:100%">
+        <input type="text" name="q" id="search" class="filtro-busqueda" placeholder="Buscar productos..." value="{{ request.GET.q|default_if_none:'' }}">
+
+        <select name="categoria" id="filtro-categoria" class="filtro-select">
+          <option value="">Todas las categorías</option>
+          {% for categoria in categorias %}
+          <option value="{{ categoria.id_categoria }}" {% if categoria_actual == categoria.id_categoria|stringformat:'s' %}selected{% endif %}>{{ categoria.nombre_categoria }}</option>
+          {% endfor %}
+        </select>
+
+        <!-- Campos de precio eliminados según requerimiento -->
+
+        <select name="orden" id="orden" class="filtro-select">
+          <option value="">Ordenar</option>
+          <option value="precio_asc" {% if request.GET.orden == 'precio_asc' %}selected{% endif %}>Precio: menor a mayor</option>
+          <option value="precio_desc" {% if request.GET.orden == 'precio_desc' %}selected{% endif %}>Precio: mayor a menor</option>
+          <option value="stock_desc" {% if request.GET.orden == 'stock_desc' %}selected{% endif %}>Stock: mayor primero</option>
+        </select>
+
+        <button class="btn-aplicar-filtro" type="submit">Aplicar</button>
+        <button class="btn-limpiar-filtro" type="button" onclick="limpiarFiltrosCatalog()">Limpiar</button>
+      </form>
+    </div>
+    
+    <!-- Swiper -->
+    <div class="swiper categorias-swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <a href="{% url 'catalog' %}" class="categoria-pill {% if not categoria_actual %}active{% endif %}">
+            <span>Todas</span>
+          </a>
+        </div>
+        {% for categoria in categorias %}
+        <div class="swiper-slide">
+          <a href="{% url 'catalog' %}?categoria={{ categoria.id_categoria }}" 
+             class="categoria-pill {% if categoria_actual == categoria.id_categoria|stringformat:'s' %}active{% endif %}"
+             data-categoria="{{ categoria.id_categoria }}">
+            <span>{{ categoria.nombre_categoria }}</span>
+          </a>
+        </div>
+        {% endfor %}
+      </div>
+      <!-- Agregar botones de navegación -->
+      <div class="swiper-button-next"></div>
+      <div class="swiper-button-prev"></div>
+    </div>
+
+    {% if user.is_staff or user.is_superuser %}
+    <button class="nueva-categoria-btn">
+      <span>+ Nueva Categoría</span>
+    </button>
+    {% endif %}
+  </section>
+
+  <!-- Grid de productos -->
+  <section class="productos-section">
+    <div class="productos-grid">
+      {% for producto in productos %}
+      <div class="producto-card">
+        {% if producto.imagen %}
+          <img src="{{ MEDIA_URL }}{{ producto.imagen }}" alt="{{ producto.nombre }}">
+        {% else %}
+          <img src="{% static 'images/no-image.png' %}" alt="No hay imagen disponible">
+        {% endif %}
+        <div class="producto-info">
+          <h3>{{ producto.nombre }}</h3>
+          <p class="descripcion">{{ producto.descripcion_producto|truncatechars:100 }}</p>
+          <p class="precio">{{ producto.precio|format_cop }}</p>
+          {% if producto.cantidad_existente == 0 %}
+            <p class="agotado">Agotado</p>
+          {% endif %}
+          <p class="vendedor">Vendedor: {{ producto.vendedor.personas_id_personas.nombre_persona }}</p>
+          <a href="{% url 'product' %}?id={{ producto.id_producto }}" class="btn-ver-mas">Ver más</a>
+        </div>
+      </div>
+      {% empty %}
+      <div id="no_producto"  class="no-productos">
+        <p>No hay productos disponibles en esta categoría.</p>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="carrito-flotante">
+      <a href="{% url 'cart' %}" class="btn-carrito">
+        <img src="{% static 'images/carritoco.png' %}" width="50" alt="Carrito">
+      </a>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <ul class="social-icon">
+    <li class="icon-elem">
+      <a href="https://www.youtube.com/@ArtesanoMarket-06" class="icon"><ion-icon name="logo-youtube"></ion-icon></a>
+    </li>
+    <li class="icon-elem">
+      <a href="https://www.instagram.com/artek__06/" class="icon"><ion-icon name="logo-instagram"></ion-icon></a>
+    </li>
+    <li class="icon-elem">
+      <a href="https://wa.me/573009688222?text=Hola,%20quiero%20más%20información" class="icon"><ion-icon name="logo-whatsapp"></ion-icon></a>
+    </li>
+    <li class="icon-elem">
+      <a href="https://www.facebook.com/profile.php?id=61584617440121" class="icon"><ion-icon name="logo-facebook"></ion-icon></a>
+    </li>
+    <li class="icon-elem">
+      <a href="https://mail.google.com/mail/?view=cm&fs=1&to=artesanomarkett@gmail.com" class="icon"><ion-icon name="mail-outline"></ion-icon></a>
+    </li>
+  </ul>
+
+    <ul class="menu-footer">
+      <li class="menu-elem">
+        {% if user_role %}
+          {% if user_role|lower == 'vendedor' %}
+            <a href="{% url 'dashboard_seller' %}" class="menu-icon-footer">Inicio</a>
+          {% elif user_role|lower == 'administrador' or user_role|lower == 'admin' %}
+            <a href="{% url 'dashboard_admin' %}" class="menu-icon-footer">Inicio</a>
+          {% elif user_role|lower == 'cliente' %}
+            <a href="{% url 'dashboard_cliente' %}" class="menu-icon-footer">Inicio</a>
+          {% else %}
+            <a href="{% url 'inicio' %}" class="menu-icon-footer">Inicio</a>
+          {% endif %}
+        {% else %}
+          <a href="{% url 'inicio' %}" class="menu-icon-footer">Inicio</a>
+        {% endif %}
+      </li>
+
+      {% if user_logged %}
+        <li class="menu-elem"><a href="{% url 'cliente_settings' %}" class="menu-icon-footer">Configuraciones</a></li>
+      {% endif %}
+      {% if user_logged %}
+        <li class="menu-elem"><a href="{% url 'auth_logout' %}" class="menu-icon-footer">Cerrar Sesión</a></li>
+      {% else %}
+        <li class="menu-elem"><a href="{% url 'login' %}" class="menu-icon-footer">Iniciar Sesión</a></li>
+      {% endif %}
+      <li class="menu-elem"><a href="{% url 'help' %}" class="menu-icon-footer">Contáctanos</a></li>
+    </ul>
+
+  <p class="text-footer">2025 | Todos los derechos reservados</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="{% static 'js/header.js' %}"></script>
+<script src="{% static 'js/catalog.js' %}"></script>
+
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+<script>
+    function limpiarFiltrosCatalog() {
+        document.getElementById("formFiltros").reset();
+        window.location.href = "{% url 'catalog' %}";
+    }
+</script>
+</body>
+</html>

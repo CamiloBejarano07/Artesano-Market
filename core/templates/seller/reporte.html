@@ -1,0 +1,59 @@
+{% load static %}
+{% load currency_tags %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de Productos</title>
+    <link rel="stylesheet" href="{% static 'css/produseller/reporte.css' %}">
+    <link rel="icon" type="image/png" sizes="48x48" href="{% static 'images/icono_artesano.png' %}" />
+</head>
+<body>
+
+<h1>Reporte de mis productos</h1>
+
+<!-- Mostrar criterio y búsqueda -->
+{% if criterio and busqueda %}
+    <p><strong>Filtro:</strong> <span>{{ criterio|title }}</span> contiene "{{ busqueda }}"</p>
+{% endif %}
+
+<!-- Mostrar si no hay productos -->
+{% if not productos %}
+    <p>No se encontraron productos con los criterios proporcionados.</p>
+{% endif %}
+
+<!-- Tabla de productos -->
+{% if productos %}
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th>Imagen</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for producto in productos %}
+            <tr>
+                <td>{{ producto.nombre }}</td>
+                <td>{{ producto.precio|format_cop }}</td>
+                <td>{{ producto.cantidadExistente }}</td>
+                <td>
+                    {% if producto.imagen %}
+                        <img src="{% static 'images/'|add:producto.imagen %}" alt="imagen" width="80">
+                    {% else %}
+                        <span>Sin imagen</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+
+<!-- Botón para volver -->
+<a href="{% url 'productos' %}" class="btn-back">Volver</a>
+
+</body>
+</html>

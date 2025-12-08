@@ -1,0 +1,140 @@
+{% load static %}
+{% load currency_tags %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detalles del Producto</title>
+  <link rel="stylesheet" href="{% static 'css/product.css' %}">
+  <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js" defer></script>
+  <link href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css" rel="stylesheet">
+  <link rel="icon" type="image/png" sizes="48x48" href="{% static 'images/icono_artesano.png' %}" /></head>
+<body>
+<header id="Header">
+  <img class="logo" src="{% static 'images/logo_artesano.png' %}" alt="Logo">
+  <nav class="navegacion">
+    {% if user_role %}
+      {% if user_role|lower == 'vendedor' %}
+        <a href="{% url 'dashboard_seller' %}">Inicio</a>
+      {% elif user_role|lower == 'administrador' or user_role|lower == 'admin' %}
+        <a href="{% url 'dashboard_admin' %}">Inicio</a>
+      {% elif user_role|lower == 'cliente' %}
+        <a href="{% url 'dashboard_cliente' %}">Inicio</a>
+      {% else %}
+        <a href="{% url 'inicio' %}">Inicio</a>
+      {% endif %}
+    {% else %}
+      <a href="{% url 'inicio' %}">Inicio</a>
+    {% endif %}
+    {% if user_logged %}
+      <a href="{% url 'cliente_settings' %}">Configuraciones</a>
+    {% endif %}
+    {% if user_logged %}
+      <a href="{% url 'auth_logout' %}">Cerrar Sesión</a>
+    {% else %}
+      <a href="{% url 'login' %}">Iniciar Sesión</a>
+    {% endif %}
+    <a href="{% url 'help' %}">Contáctanos</a>
+  </nav>
+</header>
+
+<main>
+  <div class="producto-container">
+    <div class="carousel-container">
+      <div class="main-product-image">
+        {% if producto.imagen %}
+          <img src="{{ MEDIA_URL }}{{ producto.imagen }}" alt="{{ producto.nombre }}">
+        {% else %}
+          <img src="{% static 'images/no-image.png' %}" alt="No hay imagen disponible">
+        {% endif %}
+      </div>
+    </div>
+
+    <section class="detalles-productos">
+      <div class="info-producto">
+        <h2>{{ producto.nombre }}</h2>
+        <p class="categoria">Categoría: {{ producto.categoria_id_categoria.nombre_categoria }}</p>
+        <p class="descripcion">{{ producto.descripcion_producto }}</p>
+
+        <div class="vendedor-info">
+          <h3>Vendedor</h3>
+          <p>{{ producto.vendedor.personas_id_personas.nombre_persona }} {{ producto.vendedor.personas_id_personas.apellido_persona }}</p>
+        </div>
+
+        <p class="price">
+          <span class="current-price">{{ producto.precio|format_cop }}</span>
+        </p>
+
+        <div class="stock-info">
+          <p>Stock disponible: {{ producto.cantidad_existente }}</p>
+          {% if producto.cantidad_existente <= producto.stock_min %}
+            <p class="stock-warning">¡Últimas unidades disponibles!</p>
+          {% endif %}
+        </div>
+
+        <form method="post" action="{% url 'agregar_carrito' producto.id_producto %}">
+          {% csrf_token %}
+          <button type="submit" class="anadir-al-carrito">Añadir al carrito</button>
+        </form>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="footer">
+  <ul class="social-icon">
+    <li class="icon-elem">
+      <a href="https://www.youtube.com/@ArtesanoMarket-06" class="icon"><ion-icon name="logo-youtube"></ion-icon></a>
+    </li>
+    <li class="icon-elem">
+      <a href="https://www.instagram.com/artek__06/" class="icon"><ion-icon name="logo-instagram"></ion-icon></a>
+    </li>
+    <li class="icon-elem">
+      <a href="https://wa.me/573009688222?text=Hola,%20quiero%20más%20información" class="icon"><ion-icon name="logo-whatsapp"></ion-icon></a>
+    </li>
+    <li class="icon-elem">
+      <a href="https://www.facebook.com/profile.php?id=61584617440121" class="icon"><ion-icon name="logo-facebook"></ion-icon></a>
+    </li>
+    <li class="icon-elem">
+      <a href="https://mail.google.com/mail/?view=cm&fs=1&to=artesanomarkett@gmail.com" class="icon"><ion-icon name="mail-outline"></ion-icon></a>
+    </li>
+  </ul>
+
+    <ul class="menu-footer">
+      <li class="menu-elem">
+        {% if user_role %}
+          {% if user_role|lower == 'vendedor' %}
+            <a href="{% url 'dashboard_seller' %}" class="menu-icon-footer">Inicio</a>
+          {% elif user_role|lower == 'administrador' or user_role|lower == 'admin' %}
+            <a href="{% url 'dashboard_admin' %}" class="menu-icon-footer">Inicio</a>
+          {% elif user_role|lower == 'cliente' %}
+            <a href="{% url 'dashboard_cliente' %}" class="menu-icon-footer">Inicio</a>
+          {% else %}
+            <a href="{% url 'inicio' %}" class="menu-icon-footer">Inicio</a>
+          {% endif %}
+        {% else %}
+          <a href="{% url 'inicio' %}" class="menu-icon-footer">Inicio</a>
+        {% endif %}
+      </li>
+
+      {% if user_logged %}
+        <li class="menu-elem"><a href="{% url 'cliente_settings' %}" class="menu-icon-footer">Configuraciones</a></li>
+      {% endif %}
+      {% if user_logged %}
+        <li class="menu-elem"><a href="{% url 'auth_logout' %}" class="menu-icon-footer">Cerrar Sesión</a></li>
+      {% else %}
+        <li class="menu-elem"><a href="{% url 'login' %}" class="menu-icon-footer">Iniciar Sesión</a></li>
+      {% endif %}
+      <li class="menu-elem"><a href="{% url 'help' %}" class="menu-icon-footer">Contáctanos</a></li>
+    </ul>
+
+  <p class="text-footer">2025 | Todos los derechos reservados</p>
+</footer>
+
+<script src="{% static 'js/product.js' %}"></script>
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</body>
+</html>

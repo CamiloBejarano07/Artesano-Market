@@ -1,0 +1,192 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Autenticación</title>
+  <link rel="stylesheet" href="{% static 'css/login.css' %}">
+  <link rel="icon" type="image/png" sizes="48x48" href="{% static 'images/icono_artesano.png' %}" />
+  <script>
+    function toggleForm(showRegister) {
+      document.getElementById('login-form').style.display = showRegister ? 'none' : 'block';
+      document.getElementById('register-form').style.display = showRegister ? 'block' : 'none';
+    }
+  </script>
+  <style>
+    body {
+      background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)),
+      url("{% static 'images/fondo1.jpg' %}") center/cover no-repeat fixed;
+    }
+
+    /* Estilos para validación de contraseña */
+    .pw-requirements {
+      margin-top: 8px;
+      font-size: 0.9rem;
+      color: #ddd;
+      text-align: left;
+      display: none; /* ocultar por defecto */
+    }
+    .pw-requirements li { margin-bottom: 4px; }
+    .pw-requirements li.ok { color: #4caf50; }
+    .pw-requirements li.fail { color: #ff5252; }
+
+    input.invalid { border: 2px solid #ff5252 !important; }
+    input.valid { border: 2px solid #4caf50 !important; }
+  </style>
+  <script>
+    // Valida localmente la contraseña y actualiza la UI
+    function checkPasswordRules(pw) {
+      const rules = {
+        length: pw.length >= 10,
+        lower: /[a-z]/.test(pw),
+        upper: /[A-Z]/.test(pw),
+        digit: /\d/.test(pw),
+        specials: (pw.match(/[!@#$%^&*()_+\-=[\]{}|;:\\",.<>/?]/g) || []).length >= 2
+      };
+      return rules;
+    }
+
+    function updatePwUI() {
+      const input = document.getElementById('register-password');
+      if (!input) return;
+      const val = input.value || '';
+      const rules = checkPasswordRules(val);
+
+      // marcar input
+      if (val === '') {
+        input.classList.remove('invalid','valid');
+      } else if (Object.values(rules).every(Boolean)) {
+        input.classList.add('valid'); input.classList.remove('invalid');
+      } else {
+        input.classList.add('invalid'); input.classList.remove('valid');
+      }
+
+      // actualizar lista: mostrar solo las reglas que fallan
+      const list = document.querySelector('.pw-requirements');
+      const map = {
+        length: document.getElementById('pw-rule-length'),
+        lower: document.getElementById('pw-rule-lower'),
+        upper: document.getElementById('pw-rule-upper'),
+        digit: document.getElementById('pw-rule-digit'),
+        specials: document.getElementById('pw-rule-specials')
+      };
+      let anyFail = false;
+      for (const k in map) {
+        if (!map[k]) continue;
+        map[k].className = rules[k] ? 'ok' : 'fail';
+        if (!rules[k]) {
+          map[k].style.display = 'list-item';
+          anyFail = true;
+        } else {
+          map[k].style.display = 'none';
+        }
+      }
+
+      // mostrar la lista si hay alguna regla fallida y el campo no está vacío
+      if (val !== '' && anyFail) {
+        list.style.display = 'block';
+      } else {
+        list.style.display = 'none';
+      }
+    }
+
+    function validateRegisterForm() {
+      const pw = document.getElementById('register-password').value || '';
+      const rules = checkPasswordRules(pw);
+      if (!Object.values(rules).every(Boolean)) {
+        alert('La contraseña no cumple los requisitos de seguridad. Revisa las indicaciones.');
+        return false;
+      }
+      return true;
+    }
+
+    // agregar listener cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', function() {
+      const input = document.getElementById('register-password');
+      if (input) {
+        input.addEventListener('input', updatePwUI);
+      }
+    });
+  </script>
+</head>
+<body>
+<div class="auth-container">
+
+  <!-- MENSAJES -->
+  {% if messages %}
+    {% for message in messages %}
+      {% if 'shipping_notification' not in message.tags %}
+        <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+          {{ message }}
+        </div>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
+  <!-- LOGIN -->
+  <div id="login-form">
+    <h1>Iniciar Sesión</h1>
+
+    <!-- 🔥 CORREGIDO: ahora apunta a 'auth_login' -->
+    <form method="post" action="{% url 'auth_login' %}">
+      {% csrf_token %}
+      <label for="correoPersona">Correo Electrónico</label>
+      <input type="email" id="correoPersona" name="correoPersona" value="{{ persona.correoPersona }}" required>
+
+      <label for="password">Contraseña</label>
+      <input type="password" id="password" name="password" required>
+
+      <button type="submit">Iniciar Sesión</button>
+    </form>
+
+    <!-- 🔥 NUEVO: Enlace de recuperación de contraseña -->
+    <p style="text-align: center; margin-top: 15px;">
+      <a href="{% url 'password_recovery_request' %}" style="color: #5a4a3a; text-decoration: none; font-size: 0.9em;">
+        ¿Olvidaste tu contraseña?
+      </a>
+    </p>
+
+    <p>¿No tienes cuenta?
+      <a href="#" onclick="toggleForm(true)">Regístrate aquí</a>
+    </p>
+  </div>
+
+  <!-- REGISTRO -->
+  <div id="register-form" style="display: none;">
+    <h1>Registro</h1>
+
+    <form method="post" action="{% url 'register' %}" onsubmit="return validateRegisterForm();">
+      {% csrf_token %}
+      <input type="text" name="nombrePersona" placeholder="Nombre" required>
+      <input type="text" name="apellidoPersona" placeholder="Apellido" required>
+      <input type="email" name="correoPersona" placeholder="Correo Electrónico" required>
+      <input type="password" id="register-password" name="password" placeholder="Contraseña" required>
+      <ul class="pw-requirements">
+        <li id="pw-rule-length" class="fail">Mínimo 10 caracteres</li>
+        <li id="pw-rule-lower" class="fail">Al menos una letra minúscula</li>
+        <li id="pw-rule-upper" class="fail">Al menos una letra mayúscula</li>
+        <li id="pw-rule-digit" class="fail">Al menos un número</li>
+        <li id="pw-rule-specials" class="fail">Al menos dos caracteres especiales (ej: !@#$%)</li>
+      </ul>
+      <input type="text" name="telefono" placeholder="Teléfono" required>
+      <textarea name="direccion" placeholder="Dirección"></textarea>
+
+      <!-- 🔥 CHECKBOX DE TÉRMINOS -->
+      <div class="terms-box" style="margin:10px 0; text-align:left;">
+        <label style="color:white; font-size:14px;">
+          <input type="checkbox" name="acepto_terminos" required>
+          Acepto los <a href="{% url 'terminos' %}" target="_blank" style="color:#4cafef;">términos y condiciones</a>
+        </label>
+      </div>
+
+      <button type="submit">Registrarse</button>
+    </form>
+
+    <p>¿Ya tienes cuenta?
+      <a href="#" onclick="toggleForm(false)">Inicia sesión</a>
+    </p>
+  </div>
+</div>
+</body>
+</html>

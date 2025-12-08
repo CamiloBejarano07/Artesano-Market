@@ -1,0 +1,113 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Configuraciones del Vendedor</title>
+    <link rel="stylesheet" href="{% static 'css/admin_settings.css' %}">
+    <link rel="icon" type="image/png" sizes="48x48" href="{% static 'images/icono_artesano.png' %}" />
+</head>
+<body>
+<header id="Header">
+  <img class="logo" src="{% static 'images/logo_artesano.png' %}" alt="Logo Artesano">
+
+  <nav class="navegacion">
+    <a href="{% url 'dashboard_seller' %}">Inicio</a>
+    <a href="{% url 'help' %}">Contactanos</a>
+    <a href="{% url 'seller_settings' %}">Configuración</a>
+
+        <form action="{% url 'auth_logout' %}" method="post" style="display: none;" id="logout-form">
+            {% csrf_token %}
+        </form>
+        <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Cerrar Sesión</a>
+  </nav>
+</header>
+
+<main>
+    <section class="admin-settings">
+        <h1>Configuraciones del Vendedor</h1>
+        <div class="settings-container">
+
+            <div class="setting-item">
+                <h2>Gestión de Productos</h2>
+                <p>Consulta y administra tus productos publicados.</p>
+                <a href="{% url 'productos' %}" class="btn btn-primary">Administrar Productos</a>
+            </div>
+
+            <div class="setting-item">
+                <h2>Dashboard</h2>
+                <p>Consulta estadísticas de ventas y actividad de la plataforma.</p>
+                <a href="{% url 'estadisticas_seller' %}" class="btn">Ver Dashboard</a>
+            </div>
+
+            <div class="setting-item">
+                <h2>Mi Perfil</h2>
+                <p>Actualiza tus datos personales y contraseña.</p>
+                <a href="{% url 'perfil_seller' %}" class="btn">Editar Perfil</a>
+
+            </div>
+
+            <div class="setting-item">
+                <h2>Inventario</h2>
+                <p>Consulta tu inventario</p>
+                <a href="{% url 'panel_productos_vendedor' %}" class="btn">Ver Inventario</a>
+
+            </div>
+
+            <div class="setting-item">
+                <h2>Historial de Ventas</h2>
+                <p>Revisa el historial completo de tus ventas de productos.</p>
+                <a href="{% url 'historial_ventas_vendedor' %}" class="btn btn-primary">Ver Historial</a>
+            </div>
+
+        </div>
+    </section>
+</main>
+
+<footer class="footer">
+  <ul class="social-icon">
+    <li class="icon-elem">
+      <a href="https://www.youtube.com/@ArtesanoMarket-06" class="icon"><ion-icon name="logo-youtube"></ion-icon></a>
+    </li>
+    <li class="icon-elem">
+      <a href="https://www.instagram.com/artek__06/" class="icon"><ion-icon name="logo-instagram"></ion-icon></a>
+    </li>
+    <li class="icon-elem">
+      <a href="https://wa.me/573009688222?text=Hola,%20quiero%20más%20información" class="icon"><ion-icon name="logo-whatsapp"></ion-icon></a>
+    </li>
+    <li class="icon-elem">
+      <a href="https://www.facebook.com/profile.php?id=61584617440121" class="icon"><ion-icon name="logo-facebook"></ion-icon></a>
+    </li>
+    <li class="icon-elem">
+      <a href="https://mail.google.com/mail/?view=cm&fs=1&to=artesanomarkett@gmail.com" class="icon"><ion-icon name="mail-outline"></ion-icon></a>
+    </li>
+  </ul>
+
+    <ul class="menu-footer">
+        <li class="menu-elem"><a href="{% url 'dashboard_seller' %}" class="menu-icon-footer">Inicio</a></li>
+        <li class="menu-elem"><a href="{% url 'seller_settings' %}" class="menu-icon-footer">Configuración</a></li>
+
+        {% if request.session.user_id %}
+        <li class="menu-elem">
+            <form id="logout-form-footer" action="{% url 'auth_logout' %}" method="post" style="display:none;">
+                {% csrf_token %}
+            </form>
+            <a href="#" class="menu-icon-footer"
+               onclick="event.preventDefault(); document.getElementById('logout-form-footer').submit();">
+                Cerrar Sesión
+            </a>
+        </li>
+        {% endif %}
+
+        <li class="menu-elem"><a href="{% url 'help' %}" class="menu-icon-footer">Contáctanos</a></li>
+    </ul>
+
+    <p class="text-footer">2025 | Todos los derechos reservados</p>
+</footer>
+
+<script src="{% static 'assets/js/scripts.js' %}"></script>
+<script src="{% static 'assets/js/admin_seller.js' %}"></script>
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</body>
+</html>

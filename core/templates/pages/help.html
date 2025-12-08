@@ -1,0 +1,250 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contáctanos</title>
+    <link rel="stylesheet" href="{% static 'css/help.css' %}">
+    <link rel="icon" type="image/png" sizes="48x48" href="{% static 'images/icono_artesano.png' %}" /></head>
+<body>
+<header id="Header">
+    <img class="logo" src="{% static 'images/logo_artesano.png' %}" alt="Logo">
+        <nav class="navegacion">
+                {% if user_role %}
+                    {% if user_role|lower == 'vendedor' %}
+                        <a href="{% url 'dashboard_seller' %}">Inicio</a>
+                    {% elif user_role|lower == 'administrador' or user_role|lower == 'admin' %}
+                        <a href="{% url 'dashboard_admin' %}">Inicio</a>
+                    {% elif user_role|lower == 'cliente' %}
+                        <a href="{% url 'dashboard_cliente' %}">Inicio</a>
+                    {% else %}
+                        <a href="{% url 'inicio' %}">Inicio</a>
+                    {% endif %}
+                {% else %}
+                    <a href="{% url 'inicio' %}">Inicio</a>
+                {% endif %}
+        {% if not user_role or user_role|lower == 'cliente' %}
+            <a href="{% url 'catalog' %}">Catálogo</a>
+        {% endif %}
+
+        {% if user_logged %}
+            <a href="{% url 'auth_logout' %}">Cerrar Sesión</a>
+        {% else %}
+            <a href="{% url 'login' %}">Iniciar Sesión</a>
+        {% endif %}
+
+    </nav>
+</header>
+
+<main>
+    <section class="formulario" id="contactanos">
+        
+        <h4>Contáctanos</h4>
+        <p class="form-description">
+            ¡Contáctanos! Estamos aquí para responder tus dudas, ofrecer soporte o recibir 
+            comentarios sobre Artesano Market. Si deseas trabajar o colaborar con nosotros, 
+            por favor, déjanos tu solicitud y te contactaremos pronto.
+        </p>
+
+        <form method="post" action="{% url 'help' %}">
+            {% csrf_token %}
+
+            <div class="input-group">
+                <div class="fila1">
+                    <div class="form-field">
+                        <label for="{{ form.name.id_for_label }}">Nombre</label>
+                        {{ form.name }}
+                        {% if form.name.errors %}
+                        <div class="form-error">
+                            {% for error in form.name.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-field">
+                        <label for="{{ form.lastname.id_for_label }}">Apellido</label>
+                        {{ form.lastname }}
+                        {% if form.lastname.errors %}
+                        <div class="form-error">
+                            {% for error in form.lastname.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="fila2">
+                    <div class="form-field">
+                        <label for="{{ form.phone.id_for_label }}">Teléfono</label>
+                        {{ form.phone }}
+                        {% if form.phone.errors %}
+                        <div class="form-error">
+                            {% for error in form.phone.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-field">
+                        <label for="{{ form.email.id_for_label }}">Email</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                        <div class="form-error">
+                            {% for error in form.email.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="mensaje">
+                    <label for="{{ form.message.id_for_label }}">Mensaje</label>
+                    {{ form.message }}
+                    {% if form.message.errors %}
+                    <div class="form-error">
+                        {% for error in form.message.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-terms-container">
+                    <div class="terms-checkbox-wrapper">
+                        {{ form.terms_accepted }}
+                        <label for="{{ form.terms_accepted.id_for_label }}" class="terms-label">
+                        Acepto los <a href="{% url 'terminos' %}" target="_blank" style="color:#4cafef;">términos y condiciones</a>
+                        </label>
+                    </div>
+                    {% if form.terms_accepted.errors %}
+                    <div class="form-error">
+                        {% for error in form.terms_accepted.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <input class="btn" type="submit" value="Enviar">
+            </div>
+        </form>
+
+        <!-- Modal para mensajes de éxito/error -->
+        {% if messages %}
+        <div class="modal modal-active" id="messageModal">
+            <div class="modal-content">
+                <span class="modal-close" onclick="closeModal()">&times;</span>
+                <div class="modal-body">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-modal" onclick="closeModal()">Aceptar</button>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </section>
+</main>
+
+<footer class="footer">
+  <ul class="social-icon">
+    <li class="icon-elem">
+      <a href="https://www.youtube.com/@ArtesanoMarket-06" class="icon"><ion-icon name="logo-youtube"></ion-icon></a>
+    </li>
+    <li class="icon-elem">
+      <a href="https://www.instagram.com/artek__06/" class="icon"><ion-icon name="logo-instagram"></ion-icon></a>
+    </li>
+    <li class="icon-elem">
+      <a href="https://wa.me/573009688222?text=Hola,%20quiero%20más%20información" class="icon"><ion-icon name="logo-whatsapp"></ion-icon></a>
+    </li>
+    <li class="icon-elem">
+      <a href="https://www.facebook.com/profile.php?id=61584617440121" class="icon"><ion-icon name="logo-facebook"></ion-icon></a>
+    </li>
+    <li class="icon-elem">
+      <a href="https://mail.google.com/mail/?view=cm&fs=1&to=artesanomarkett@gmail.com" class="icon"><ion-icon name="mail-outline"></ion-icon></a>
+    </li>
+  </ul>
+
+    <ul class="menu-footer">
+                <li class="menu-elem">
+                    {% if user_role %}
+                        {% if user_role|lower == 'vendedor' %}
+                            <a href="{% url 'dashboard_seller' %}" class="menu-icon-footer">Inicio</a>
+                        {% elif user_role|lower == 'administrador' or user_role|lower == 'admin' %}
+                            <a href="{% url 'dashboard_admin' %}" class="menu-icon-footer">Inicio</a>
+                        {% elif user_role|lower == 'cliente' %}
+                            <a href="{% url 'dashboard_cliente' %}" class="menu-icon-footer">Inicio</a>
+                        {% else %}
+                            <a href="{% url 'inicio' %}" class="menu-icon-footer">Inicio</a>
+                        {% endif %}
+                    {% else %}
+                        <a href="{% url 'inicio' %}" class="menu-icon-footer">Inicio</a>
+                    {% endif %}
+                </li>
+        {% if not user_role or user_role|lower == 'cliente' %}
+            <li class="menu-elem"><a href="{% url 'catalog' %}" class="menu-icon-footer">Catálogo</a></li>
+        {% endif %}
+
+        {% if user_logged %}
+            <li class="menu-elem"><a href="{% url 'auth_logout' %}" class="menu-icon-footer">Cerrar Sesión</a></li>
+        {% else %}
+            <li class="menu-elem"><a href="{% url 'login' %}" class="menu-icon-footer">Iniciar Sesión</a></li>
+        {% endif %}
+
+    </ul>
+
+    <p class="text-footer">2025 | Todos los derechos reservados</p>
+</footer>
+
+<script src="{% static 'js/script.js' %}"></script>
+<script>
+    // Modal para mensajes - Inicializar cuando el documento esté listo
+    document.addEventListener('DOMContentLoaded', function() {
+        const modal = document.getElementById('messageModal');
+        if (modal && modal.classList.contains('modal-active')) {
+            // El modal se mostrará automáticamente
+            console.log('Modal activo, mostrando...');
+        }
+    });
+
+    // Cerrar modal
+    function closeModal() {
+        const modal = document.getElementById('messageModal');
+        if (modal) {
+            modal.classList.remove('modal-active');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
+        }
+    }
+
+    // Cerrar modal al hacer clic fuera (en el fondo gris)
+    window.addEventListener('click', function(event) {
+        const modal = document.getElementById('messageModal');
+        if (modal && event.target === modal) {
+            closeModal();
+        }
+    });
+
+    // Cerrar modal con tecla Escape
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeModal();
+        }
+    });
+</script>
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</body>
+</html>

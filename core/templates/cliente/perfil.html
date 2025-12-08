@@ -1,0 +1,115 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Perfil - Cliente</title>
+  <link rel="stylesheet" href="{% static 'css/perfil.css' %}">
+  <link rel="icon" type="image/png" sizes="48x48" href="{% static 'images/icono_artesano.png' %}" />
+</head>
+<body>
+
+<header id="Header">
+  <img class="logo" src="{% static 'images/logo_artesano.png' %}" alt="Logo Artesano">
+  <nav class="navegacion">
+    <a href="{% url 'dashboard_cliente' %}">Inicio</a>
+    <a href="{% url 'catalog' %}">Catálogo</a>
+    <a href="{% url 'help' %}">Contáctanos</a>
+    {% if user_logged %}
+      <a href="{% url 'cliente_settings' %}">Configuraciones</a>
+      <form id="logout-form" action="{% url 'auth_logout' %}" method="post" style="display:none;">{% csrf_token %}</form>
+      <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Cerrar Sesión</a>
+    {% else %}
+      <a href="{% url 'login' %}">Iniciar Sesión</a>
+    {% endif %}
+  </nav>
+</header>
+
+<!-- MENSAJES -->
+{% if messages %}
+    {% for message in messages %}
+        {% if 'profile_update' in message.tags %}
+            <div style="background-color: #D5F4E6; border: 1px solid #27AE60; color: #27AE60; padding: 15px; border-radius: 5px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; font-weight: 600;">
+                <span style="font-size: 20px;">✅</span>
+                <strong>{{ message }}</strong>
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+<main class="settings-page">
+  <div class="settings-header">
+    <h1>Mi Perfil</h1>
+  </div>
+
+  <div class="profile-card">
+    <div class="profile-photo">
+      {{ persona.nombre_persona|slice:":1" }}{{ persona.apellido_persona|slice:":1" }}
+    </div>
+
+    <div class="profile-info">
+      <h2>{{ persona.nombre_persona }} {{ persona.apellido_persona }}</h2>
+      <p><strong>Correo:</strong> {{ persona.correo_persona }}</p>
+      <p><strong>Teléfono:</strong> {{ persona.telefono|default:'No registrado' }}</p>
+      <p><strong>Dirección:</strong> {{ persona.direccion|default:'No registrada' }}</p>
+
+      <div class="profile-actions">
+        <a href="{% url 'editar_perfil' %}" class="btn">Modificar datos</a>
+        <a href="{% url 'editar_perfil' %}#cambiar-pass" class="btn btn-outline">Cambiar contraseña</a>
+        <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="btn">Cerrar Sesión</a>
+        <a href="{% url 'cliente_settings' %}" class="btn btn-outline">Volver a Configuraciones</a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <ul class="social-icon">
+    <li class="icon-elem">
+      <a href="https://www.youtube.com/@ArtesanoMarket-06" class="icon"><ion-icon name="logo-youtube"></ion-icon></a>
+    </li>
+    <li class="icon-elem">
+      <a href="https://www.instagram.com/artek__06/" class="icon"><ion-icon name="logo-instagram"></ion-icon></a>
+    </li>
+    <li class="icon-elem">
+      <a href="https://wa.me/573009688222?text=Hola,%20quiero%20más%20información" class="icon"><ion-icon name="logo-whatsapp"></ion-icon></a>
+    </li>
+    <li class="icon-elem">
+      <a href="https://www.facebook.com/profile.php?id=61584617440121" class="icon"><ion-icon name="logo-facebook"></ion-icon></a>
+    </li>
+    <li class="icon-elem">
+      <a href="https://mail.google.com/mail/?view=cm&fs=1&to=artesanomarkett@gmail.com" class="icon"><ion-icon name="mail-outline"></ion-icon></a>
+    </li>
+  </ul>
+
+  <ul class="menu-footer">
+    <li class="menu-elem"><a href="{% url 'dashboard_cliente' %}" class="menu-icon-footer">Inicio</a></li>
+
+    {% if request.session.user_id %}
+      <li class="menu-elem"><a href="{% url 'cliente_settings' %}" class="menu-icon-footer">Configuraciones</a></li>
+      <li class="menu-elem"><a href="{% url 'catalog' %}" class="menu-icon-footer">Catálogo</a></li>
+      <li class="menu-elem"><a href="{% url 'help' %}" class="menu-icon-footer">Contáctanos</a></li>
+      <form id="logout-form-footer" action="{% url 'auth_logout' %}" method="post" style="display:none;">
+        {% csrf_token %}
+      </form>
+      <li class="menu-elem">
+        <a href="#" class="menu-icon-footer"
+           onclick="event.preventDefault(); document.getElementById('logout-form-footer').submit();">
+          Cerrar Sesión
+        </a>
+      </li>
+    {% endif %}
+
+
+  </ul>
+
+  <p class="text-footer">2025 | Todos los derechos reservados</p>
+</footer>
+
+<script src="{% static 'assets/js/scripts.js' %}"></script>
+<script src="{% static 'assets/js/admin_seller.js' %}"></script>
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</body>
+</html>

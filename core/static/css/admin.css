@@ -1,0 +1,317 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+
+body{
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+
+}
+
+/*header*/
+
+header {
+    height: auto;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 5%;
+    padding-right: 5%;
+    box-sizing: border-box;
+    transition: 0.5s;
+    z-index: 1000;
+}
+
+
+.logo{
+    width: 70px;
+    height: 70px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    border-radius: 35px;
+}
+
+.navegacion a{
+    position: relative;
+    font-size: 1.35rem;
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    margin-left: 40px;
+}
+
+.navegacion a::after{
+    content: "";
+    position: absolute;
+    width: 100%;
+    bottom: -6px;
+    left: 0;
+    height: 2px;
+    background: #F39C12;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform .4s;
+}
+
+.navegacion a:hover::after{
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+a:hover{
+    color: #F39C12;
+}
+
+/*inicio*/
+
+.inicio {
+    margin: 0 auto;
+    display: block;
+    padding-top: 210px;
+    padding-bottom: 150px;
+    justify-content: center;
+    text-align: center;
+    height: 680px;
+    background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.4)), url(../images/fondo_inicio.jpg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.inicio h1 {
+    font-size: 80px;
+    padding-top: 50px;
+    color: white;
+}
+
+.inicio p {
+    font-size: 30px;
+    margin-top: -40px;
+    padding-bottom: 20px;
+    color: white;
+}
+
+.inicio button {
+    background-color: #F39C12;
+    font-size: 20px;
+    border-radius: 10px ;
+    padding: 10px;
+    display: block;
+    text-align: center;
+    margin: auto;
+    margin-top: 20px;
+    margin-bottom: 80px;
+    color: #000000;
+    text-decoration: none;
+    transition: transform 0.5s ease;
+    cursor: pointer;
+}
+
+.inicio button:hover {
+    color: #ffffff;
+    background-color: #D35400;
+    transform: scale(1.05);
+}
+
+.buttom-home1 {
+    position: fixed;
+    bottom: 10px;
+    right: 20px;
+    cursor: pointer;
+}
+
+
+
+/* linea morada*/
+
+.btn-settings {
+    background-color: #F39C12;
+    font-size: 20px;
+    border-radius: 10px;
+    padding: 10px 20px;
+    color: #000000;
+    text-decoration: none;
+    transition: transform 0.5s ease;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.btn-settings:hover {
+    background-color: #D35400;
+    color: #ffffff;
+    transform: scale(1.05);
+}
+
+
+
+/* footer */
+
+footer{
+    position: relative;
+    max-width: 1920px;
+    background: #000000;
+    min-height: 100px;
+    padding: 20px 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.social-icon{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    margin: 10px 5px;
+    flex-wrap: wrap;
+    margin-right: 2%;
+}
+
+.icon-elem{
+    list-style: none;
+}
+
+.icon{
+    color: white;
+    font-size: 32px;
+    display: inline-block;
+    margin: 0 10px;
+    transition: 0.5s;
+}
+
+.icon:hover{
+    transform: translateY(-10px);
+}
+
+.menu-footer{
+    display: flex;
+    justify-content: center;
+    position: relative;
+    align-items: center;
+    margin: 10px 0;
+    flex-wrap: wrap;
+    margin-right: 2%;
+}
+
+.menu-elem{
+    list-style: none;
+}
+
+.menu-icon-footer{
+    color: white;
+    font-size: 20px;
+    display: inline-block;
+    text-decoration: none;
+    margin: 5px 10px;
+    opacity: 0.75;
+    transition: 0.3s;
+}
+
+.menu-icon-footer:hover{
+    opacity: 1;
+}
+
+.text-footer{
+    color: white;
+    text-align: center;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    font-size: 20px;
+}
+
+/* responsive */
+
+@media (max-width: 576px) {
+    header {
+        flex-direction: column;
+        text-align: center;
+        padding: 10px;
+    }
+
+    .logo {
+        font-size: 1.8rem;
+        margin-bottom: 10px;
+    }
+
+    .navegacion a {
+        font-size: 1rem;
+        margin: 10px 0;
+    }
+
+    .inicio {
+        padding-top: 100px;
+        padding-bottom: 100px;
+        height: auto;
+    }
+
+    .inicio h1 {
+        font-size: 50px;
+    }
+
+    .inicio p {
+        font-size: 18px;
+    }
+
+    .inicio button {
+        font-size: 16px;
+        padding: 8px;
+    }
+
+    footer {
+        padding: 10px 20px;
+    }
+
+    .icon {
+        font-size: 24px;
+        margin: 5px;
+    }
+
+    .menu-icon-footer {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        text-align: center;
+        padding: 10px 20px;
+    }
+
+    .logo {
+        font-size: 2rem;
+        margin-bottom: 15px;
+    }
+
+    .navegacion a {
+        font-size: 1.2rem;
+        margin: 0 10px;
+    }
+
+    .inicio h1 {
+        font-size: 60px;
+    }
+
+    .inicio p {
+        font-size: 20px;
+    }
+
+}
+
+@media (max-width: 1444px) {
+    header {
+        padding: 0 8%;
+    }
+
+    .inicio {
+        padding-top: 150px;
+        padding-bottom: 150px;
+    }
+
+    footer {
+        padding: 20px 50px;
+    }
+}

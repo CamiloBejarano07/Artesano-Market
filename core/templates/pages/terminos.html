@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Términos y Condiciones - Artesano Market</title>
+  <link rel="icon" type="image/png" sizes="48x48" href="{% static 'images/icono_artesano.png' %}" /></head>
+  <style>
+    body {
+      background: #111;
+      color: white;
+      font-family: Arial;
+      padding: 40px;
+      line-height: 1.6;
+    }
+    h1, h3 { color: #4cafef; }
+    a { color: #4cafef; }
+  </style>
+</head>
+<body>
+
+<h1>Términos y Condiciones</h1>
+
+<p>
+Bienvenido a <strong>Artesano Market</strong>. Al registrarse y utilizar nuestros servicios,
+usted acepta los siguientes términos y condiciones:
+</p>
+
+<h3>1. Uso de la plataforma</h3>
+<p>
+El usuario se compromete a utilizar la plataforma de manera responsable y únicamente
+para fines permitidos.
+</p>
+
+<h3>2. Datos personales</h3>
+<p>
+La información registrada será tratada con estricta confidencialidad y se usará solo
+para operar la plataforma.
+</p>
+
+<h3>3. Política de devoluciones</h3>
+<p>
+En Artesano Market <strong>NO se realizan devoluciones</strong> debido a que los productos son artesanales
+y hechos a mano.  
+Solo en casos extremadamente excepcionales podrá evaluarse una devolución o cambio, 
+y únicamente si el usuario se comunica a través del formulario oficial de 
+<a href="{% url 'help' %}">Contáctanos</a>
+
+</p>
+
+<h3>4. Responsabilidad del usuario</h3>
+<p>
+Usted es responsable de la seguridad de su cuenta y contraseña.
+</p>
+
+<h3>5. Cambios en los términos</h3>
+<p>
+Artesano Market puede actualizar estos términos en cualquier momento.
+</p>
+
+<br><br>
+<a href="#" onclick="window.close();">Cerrar</a>
+
+</body>
+</html>

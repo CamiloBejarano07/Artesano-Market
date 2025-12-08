@@ -1,0 +1,104 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuraciones del Administrador</title>
+    <link rel="icon" type="image/png" sizes="48x48" href="{% static 'images/icono_artesano.png' %}" />
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'css/admin_settings.css' %}">
+</head>
+<body>
+<header id="Header">
+    <img class="logo" src="{% static 'images/logo_artesano.png' %}" alt="Logo Artesano">
+    <nav class="navegacion">
+        <a href="{% url 'dashboard_admin' %}">Inicio</a>
+        <a href="{% url 'admin_settings' %}">Configuraciones</a>
+
+        <form id="logout-form" action="{% url 'auth_logout' %}" method="post" style="display:none;">
+            {% csrf_token %}
+        </form>
+        <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+            Cerrar Sesión
+        </a>
+    </nav>
+</header>
+
+<main>
+    <section class="admin-settings">
+        <h1>Configuraciones del Administrador</h1>
+        <div class="settings-container">
+
+            <div class="setting-item">
+                <h2>Gestión de Usuarios</h2>
+                <p>Visualiza, edita o elimina usuarios registrados en la plataforma.</p>
+                <a href="{% url 'listar_vendedores' %}" class="btn">Administrar Usuarios</a>
+            </div>
+
+            <div class="setting-item">
+                <h2>Correos</h2>
+                <p>Envío de correos masivos.</p>
+                <a href="{% url 'mostrar_formulario_correos' %}" class="btn">Correos</a>
+            </div>
+
+            <div class="setting-item">
+                <h2>Dashboard</h2>
+                <p>Consulta estadísticas de ventas y actividad de la plataforma.</p>
+                <a href="{% url 'estadisticas' %}"class="btn">Ver Dashboard</a>
+            </div>
+
+            <div class="setting-item">
+                <h2>Perfil</h2>
+                <p>Visualiza y edita tu perfil de administrador.</p>
+                <a href="{% url 'admin_perfil' %}" class="btn">Ver Perfil</a>
+            </div>
+
+            <div class="setting-item">
+                <h2>Categorías</h2>
+                <p>Gestiona las categorías de productos de la plataforma.</p>
+                <a href="{% url 'listar_categorias_admin' %}" class="btn">Gestionar Categorías</a>
+            </div>
+
+        </div>
+    </section>
+</main>
+
+<footer class="footer">
+    <ul class="social-icon">
+        <li class="icon-elem">
+        <a href="https://www.youtube.com/@ArtesanoMarket-06" class="icon"><ion-icon name="logo-youtube"></ion-icon></a>
+        </li>
+        <li class="icon-elem">
+        <a href="https://www.instagram.com/artek__06/" class="icon"><ion-icon name="logo-instagram"></ion-icon></a>
+        </li>
+        <li class="icon-elem">
+        <a href="https://wa.me/573009688222?text=Hola,%20quiero%20más%20información" class="icon"><ion-icon name="logo-whatsapp"></ion-icon></a>
+        </li>
+        <li class="icon-elem">
+        <a href="https://www.facebook.com/profile.php?id=61584617440121" class="icon"><ion-icon name="logo-facebook"></ion-icon></a>
+        </li>
+        <li class="icon-elem">
+        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=artesanomarkett@gmail.com" class="icon"><ion-icon name="mail-outline"></ion-icon></a>
+        </li>
+    </ul>
+
+    <ul class="menu-footer">
+        <li class="menu-elem"><a href="{% url 'dashboard_admin' %}" class="menu-icon-footer">Inicio</a></li>
+        <li class="menu-elem"><a href="{% url 'admin_settings' %}" class="menu-icon-footer">Configuraciones</a></li>
+            <a href="#" class="menu-icon-footer"
+               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                Cerrar Sesión
+            </a>
+        </li>
+    </ul>
+
+    <p class="text-footer">2025 | Todos los derechos reservados</p>
+</footer>
+
+<script src="{% static 'js/admin_seller.js' %}"></script>
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</body>
+</html>

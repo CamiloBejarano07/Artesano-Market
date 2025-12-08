@@ -1,0 +1,142 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Artesano Market</title>
+
+  <!-- Estilos locales -->
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+  <!-- SplideJS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
+  <link rel="icon" type="image/png" sizes="48x48" href="{% static 'images/icono_artesano.png' %}" /></head>
+<body>
+
+<header id="Header">
+  <img class="logo" src="{% static 'images/logo_artesano.png' %}" alt="Logo Artesano">
+  <nav class="navegacion">
+    {% if user_role %}
+      {% if user_role|lower == 'vendedor' %}
+        <a href="{% url 'dashboard_seller' %}">Inicio</a>
+      {% elif user_role|lower == 'administrador' or user_role|lower == 'admin' %}
+        <a href="{% url 'dashboard_admin' %}">Inicio</a>
+      {% elif user_role|lower == 'cliente' %}
+        <a href="{% url 'dashboard_cliente' %}">Inicio</a>
+      {% else %}
+        <a href="{% url 'inicio' %}">Inicio</a>
+      {% endif %}
+    {% else %}
+      <a href="{% url 'inicio' %}">Inicio</a>
+    {% endif %}
+    <a href="{% url 'catalog' %}">Catálogo</a>
+    <a href="{% url 'help' %}">Contactanos</a>
+    {% if user_logged %}
+      <a href="{% url 'auth_logout' %}">Cerrar Sesión</a>
+    {% else %}
+      <a href="{% url 'login' %}">Iniciar Sesión</a>
+    {% endif %}
+  </nav>
+</header>
+
+<main>
+  <section class="inicio">
+    <h1>Bienvenido a Artesano Market</h1>
+    <p>Descubre lo mejor de la artesanía local.</p>
+    <a href="{% url 'catalog' %}" class="btn-settings">Explorar Catálogo</a>
+  </section>
+
+  <section class="productos-destacados">
+    <h2>Productos Destacados</h2>
+    <div class="splide">
+      <div class="splide__track">
+        <ul class="splide__list">
+          {% if productos_destacados %}
+            {% for p in productos_destacados %}
+              <li class="splide__slide">
+                <a href="{% url 'product' %}?id={{ p.id_producto }}">
+                  {% if p.imagen %}
+                    <img src="{{ MEDIA_URL }}{{ p.imagen }}" alt="{{ p.nombre }}">
+                  {% else %}
+                    <img src="{% static 'images/default_product.png' %}" alt="{{ p.nombre }}">
+                  {% endif %}
+                </a>
+              </li>
+            {% endfor %}
+          {% else %}
+            <li class="splide__slide no-destacados">
+              <div class="no-destacados-msg">No hay productos destacados en el momento.</div>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+    <div>
+      <a href="{% url 'cart' %}" class="buttom-home1">
+        <img src="{% static 'images/carritoco.png' %}" width="75" alt="Carrito">
+      </a>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <ul class="social-icon">
+    <li class="icon-elem">
+      <a href="https://www.youtube.com/@ArtesanoMarket-06" class="icon"><ion-icon name="logo-youtube"></ion-icon></a>
+    </li>
+    <li class="icon-elem">
+      <a href="https://www.instagram.com/artek__06/" class="icon"><ion-icon name="logo-instagram"></ion-icon></a>
+    </li>
+    <li class="icon-elem">
+      <a href="https://wa.me/573009688222?text=Hola,%20quiero%20más%20información" class="icon"><ion-icon name="logo-whatsapp"></ion-icon></a>
+    </li>
+    <li class="icon-elem">
+      <a href="https://www.facebook.com/profile.php?id=61584617440121" class="icon"><ion-icon name="logo-facebook"></ion-icon></a>
+    </li>
+    <li class="icon-elem">
+      <a href="https://mail.google.com/mail/?view=cm&fs=1&to=artesanomarkett@gmail.com" class="icon"><ion-icon name="mail-outline"></ion-icon></a>
+    </li>
+  </ul>
+
+  <ul class="menu-footer">
+    <li class="menu-elem">
+      {% if user_role %}
+        {% if user_role|lower == 'vendedor' %}
+          <a href="{% url 'dashboard_seller' %}" class="menu-icon-footer">Inicio</a>
+        {% elif user_role|lower == 'administrador' or user_role|lower == 'admin' %}
+          <a href="{% url 'dashboard_admin' %}" class="menu-icon-footer">Inicio</a>
+        {% elif user_role|lower == 'cliente' %}
+          <a href="{% url 'dashboard_cliente' %}" class="menu-icon-footer">Inicio</a>
+        {% else %}
+          <a href="{% url 'inicio' %}" class="menu-icon-footer">Inicio</a>
+        {% endif %}
+      {% else %}
+        <a href="{% url 'inicio' %}" class="menu-icon-footer">Inicio</a>
+      {% endif %}
+    </li>
+    <li class="menu-elem"><a href="{% url 'catalog' %}" class="menu-icon-footer">Catálogo</a></li>
+    {% if user_logged %}
+      <li class="menu-elem"><a href="{% url 'auth_logout' %}" class="menu-icon-footer">Cerrar Sesión</a></li>
+    {% else %}
+      <li class="menu-elem"><a href="{% url 'login' %}" class="menu-icon-footer">Iniciar Sesión</a></li>
+    {% endif %}
+    <li class="menu-elem"><a href="{% url 'help' %}" class="menu-icon-footer">Contactanos</a></li>
+  </ul>
+
+  <p class="text-footer">2025 | Todos los derechos reservados</p>
+</footer>
+
+<!-- JS de Splide -->
+<script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+
+<!-- Tu JS local -->
+<script src="{% static 'js/script.js' %}"></script>
+
+<!-- Ionicons -->
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+</body>
+</html>

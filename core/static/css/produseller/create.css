@@ -1,0 +1,298 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+
+/* ============================== */
+/*         ESTILOS GENERALES      */
+/* ============================== */
+
+body {
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    background: #F7F9FA;
+    padding-top: 160px;
+}
+
+/* ============================== */
+/*             HEADER             */
+/* ============================== */
+
+header {
+    height: auto;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 5%;
+    padding-right: 5%;
+    box-sizing: border-box;
+    background: #2C3E50;
+    transition: 0.5s;
+    z-index: 1000;
+}
+
+.logo {
+    width: 70px;
+    height: 70px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    border-radius: 35px;
+}
+
+.navegacion a {
+    position: relative;
+    font-size: 1.35rem;
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    margin-left: 40px;
+}
+
+.navegacion a::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    bottom: -6px;
+    left: 0;
+    height: 2px;
+    background: #F39C12;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform .4s;
+}
+
+.navegacion a:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+a:hover {
+    color: #F39C12;
+}
+/* ============================
+   MAIN
+============================ */
+
+main {
+    max-width: 650px;
+    margin: 0 auto;
+    background: #ECF0F1;
+    border-radius: 12px;
+    padding: 40px;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.15);
+}
+
+h1 {
+    font-size: 2.2rem;
+    color: #2C3E50;
+    text-align: center;
+    margin-bottom: 25px;
+    font-weight: 700;
+}
+
+/* ============================
+   FORMULARIO
+============================ */
+
+label {
+    font-weight: 600;
+    display: block;
+    margin-top: 1rem;
+    margin-bottom: 6px;
+    color: #34495E;
+}
+
+input[type="text"],
+input[type="number"],
+textarea,
+select,
+input[type="file"] {
+    width: 100%;
+    border: 1px solid #BDC3C7;
+    border-radius: 8px;
+    padding: 12px;
+    background: #fff;
+    font-size: 1rem;
+    transition: border-color .3s ease, box-shadow .3s ease;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: #F39C12;
+    box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.25);
+    outline: none;
+}
+
+/* ============================
+   BOTONES
+============================ */
+
+.botones {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.btn-guardar {
+    background-color: #F39C12;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: .3s;
+}
+
+.btn-guardar:hover {
+    background-color: #D35400;
+    transform: scale(1.03);
+}
+
+.btn-cancelar {
+    background-color: #7F8C8D;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: .3s;
+}
+
+.btn-cancelar:hover {
+    background-color: #616A6B;
+    transform: scale(1.03);
+}
+
+/* ============================
+   ALERTAS
+============================ */
+
+.alert {
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+.alert-danger {
+    background-color: #FDEDEC;
+    border: 1px solid #F5B7B1;
+    color: #C0392B;
+}
+
+/* ============================
+   FOOTER
+============================ */
+
+footer {
+    margin-top: 60px;
+    position: relative;
+    max-width: 1920px;
+    background: #2C3E50;
+    min-height: 120px;
+    padding: 20px 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.social-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    margin: 10px 5px;
+    flex-wrap: wrap;
+}
+
+.icon-elem { list-style: none; }
+
+.icon {
+    color: white;
+    font-size: 32px;
+    display: inline-block;
+    margin: 0 10px;
+    transition: 0.5s;
+}
+
+.icon:hover {
+    transform: translateY(-10px);
+}
+
+.menu-footer {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    align-items: center;
+    margin: 10px 0;
+    flex-wrap: wrap;
+}
+
+.menu-elem {
+    list-style: none;
+}
+
+.menu-icon-footer {
+    color: white;
+    font-size: 20px;
+    text-decoration: none;
+    margin: 5px 10px;
+    opacity: 0.75;
+    transition: 0.3s;
+}
+
+.menu-icon-footer:hover {
+    opacity: 1;
+}
+
+.text-footer {
+    color: white;
+    text-align: center;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    font-size: 20px;
+}
+
+/* ============================
+   RESPONSIVE
+============================ */
+
+@media (max-width: 768px) {
+
+    header {
+        flex-direction: column;
+        padding: 10px;
+        text-align: center;
+    }
+
+    .navegacion a {
+        font-size: 1rem;
+        margin: 10px 10px;
+    }
+
+    main {
+        padding: 25px;
+        margin: 20px;
+    }
+
+    .btn-guardar,
+    .btn-cancelar {
+        padding: 10px;
+    }
+
+    .menu-icon-footer {
+        font-size: 16px;
+    }
+}

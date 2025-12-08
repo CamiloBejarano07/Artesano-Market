@@ -1,0 +1,68 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de Vendedores</title>
+    <link rel="stylesheet" href="{% static 'css/report.css' %}">
+    <link rel="icon" type="image/png" sizes="48x48" href="{% static 'images/icono_artesano.png' %}" />
+</head>
+<body>
+
+<!-- MENSAJES -->
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<h1>Reporte de Vendedores</h1>
+
+<div class="fecha">
+    Fecha de generación:
+    <span>{{ fecha_actual|date:"d/m/Y H:i" }}</span>
+</div>
+
+{% if criterio and busqueda %}
+    <div class="fecha">
+        Búsqueda por:
+        <strong>{{ criterio|capfirst }}</strong> =
+        <em>{{ busqueda }}</em>
+    </div>
+{% else %}
+    <div class="fecha">
+        Sin filtros aplicados
+    </div>
+{% endif %}
+
+<table>
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Correo</th>
+            <th>Teléfono</th>
+            <th>Dirección</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for v in vendedores %}
+        <tr>
+            <td>{{ v.personas_id_personas.nombre_persona }}</td>
+            <td>{{ v.personas_id_personas.apellido_persona }}</td>
+            <td>{{ v.personas_id_personas.correo_persona }}</td>
+            <td>{{ v.personas_id_personas.telefono }}</td>
+            <td>{{ v.personas_id_personas.direccion }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5">No hay vendedores para mostrar.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+</body>
+</html>

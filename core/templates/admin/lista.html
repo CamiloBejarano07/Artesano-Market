@@ -1,0 +1,168 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Lista de Vendedores</title>
+    <link rel="stylesheet" href="{% static 'css/admin_lista.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Acme&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" sizes="48x48" href="{% static 'images/icono_artesano.png' %}" />
+
+</head>
+<body>
+<header id="Header">
+    <img class="logo" src="{% static 'images/logo_artesano.png' %}" alt="Logo Artesano">
+    <nav class="navegacion">
+        <a href="{% url 'dashboard_admin' %}">Inicio</a>
+        <a href="{% url 'admin_settings' %}">Configuraciones</a>
+
+        <form id="logout-form" action="{% url 'auth_logout' %}" method="post" style="display:none;">
+            {% csrf_token %}
+        </form>
+        <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+            Cerrar Sesión
+        </a>
+    </nav>
+</header>
+<div class="container">
+    <h1>Lista de Vendedores</h1>
+
+    <!-- MENSAJES -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="header-actions">
+        <a href="{% url 'crear_vendedor' %}" class="btn-create">Crear Vendedor</a>
+        <form action="{% url 'cargar_csv' %}" method="post" enctype="multipart/form-data" style="margin-top:10px;">
+            {% csrf_token %}
+            <div class="file-upload">
+                <label for="file-upload" class="custom-file-upload">Seleccionar archivo</label>
+                <input id="file-upload" type="file" name="file" accept=".csv" required>
+                <span id="file-name">Ningún archivo seleccionado</span>
+                <button type="submit" class="btn btn-primary">Cargar CSV</button>
+            </div>
+        </form>
+
+        <div class="filter-center">
+            <form action="{% url 'filtrar_vendedores' %}" method="get" class="filter-form" id="filterForm">
+                <label for="criterio">Buscar por:</label>
+                <select name="criterio" id="criterio">
+                    <option value="nombre">Nombre</option>
+                    <option value="apellido">Apellido</option>
+                    <option value="correo">Correo</option>
+                    <option value="telefono">Teléfono</option>
+                    <option value="direccion">Dirección</option>
+                </select>
+                <input type="text" name="busqueda" placeholder="Escribe tu búsqueda" value="{{ request.GET.busqueda }}">
+                <button type="submit">Buscar</button>
+                <button type="button" class="btn-clear" onclick="limpiarFiltro()">Limpiar</button>
+            </form>
+        </div>
+    </div>
+
+    <table class="clientes-table">
+        <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Correo</th>
+            <th>Teléfono</th>
+            <th>Dirección</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% if vendedores %}
+            {% for vendedor in vendedores %}
+                {% with persona=vendedor.personas_id_personas %}
+                <tr>
+                    <td>{{ persona.nombre_persona }}</td>
+                    <td>{{ persona.apellido_persona }}</td>
+                    <td>{{ persona.correo_persona }}</td>
+                    <td>{{ persona.telefono }}</td>
+                    <td>{{ persona.direccion }}</td>
+                    <td class="{% if persona.estado == 'Activo' %}estado-activo{% else %}estado-suspendido{% endif %}">
+                        {{ persona.estado }}
+                    </td>
+                    <td>
+                        <a href="{% url 'editar_vendedor' persona.id_personas %}" class="btn btn-edit">Editar</a>
+                        {% if persona.estado == 'Activo' %}
+                        <form action="{% url 'eliminar_vendedor' persona.id_personas %}" method="post" class="delete-form" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-delete">Suspender</button>
+                        </form>
+                        {% else %}
+                        <form action="{% url 'reactivar_vendedor' persona.id_personas %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success">Reactivar</button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endwith %}
+            {% endfor %}
+        {% else %}
+            <tr><td colspan="7">No se encontraron resultados.</td></tr>
+        {% endif %}
+        </tbody>
+    </table>
+
+    <div class="footer-actions">
+        <a href="{% url 'admin_settings' %}" class="btn btn-back">Volver a Configuraciones</a>
+    </div>
+</div>
+
+<footer class="footer">
+    <ul class="social-icon">
+        <li class="icon-elem">
+        <a href="https://www.youtube.com/@ArtesanoMarket-06" class="icon"><ion-icon name="logo-youtube"></ion-icon></a>
+        </li>
+        <li class="icon-elem">
+        <a href="https://www.instagram.com/artek__06/" class="icon"><ion-icon name="logo-instagram"></ion-icon></a>
+        </li>
+        <li class="icon-elem">
+        <a href="https://wa.me/573009688222?text=Hola,%20quiero%20más%20información" class="icon"><ion-icon name="logo-whatsapp"></ion-icon></a>
+        </li>
+        <li class="icon-elem">
+        <a href="https://www.facebook.com/profile.php?id=61584617440121" class="icon"><ion-icon name="logo-facebook"></ion-icon></a>
+        </li>
+        <li class="icon-elem">
+        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=artesanomarkett@gmail.com" class="icon"><ion-icon name="mail-outline"></ion-icon></a>
+        </li>
+    </ul>
+
+    <ul class="menu-footer">
+        <li class="menu-elem"><a href="{% url 'dashboard_admin' %}" class="menu-icon-footer">Inicio</a></li>
+        <li class="menu-elem"><a href="{% url 'admin_settings' %}" class="menu-icon-footer">Configuraciones</a></li>
+            <a href="#" class="menu-icon-footer"
+               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                Cerrar Sesión
+            </a>
+        </li>
+    </ul>
+
+    <p class="text-footer">2025 | Todos los derechos reservados</p>
+</footer>
+
+<script src="{% static 'js/scripts.js' %}"></script>
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+<script>
+    document.getElementById("file-upload").addEventListener("change", function(){
+        const fileName = this.files.length > 0 ? this.files[0].name : "Ningún archivo seleccionado";
+        document.getElementById("file-name").textContent = fileName;
+    });
+
+    function limpiarFiltro() {
+        document.getElementById("filterForm").reset();
+        window.location.href = "{% url 'filtrar_vendedores' %}";
+    }
+</script>
+</body>
+</html>
