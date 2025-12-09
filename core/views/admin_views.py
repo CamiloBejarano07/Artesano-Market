@@ -84,9 +84,13 @@ def estadisticas_admin(request):
     total_sellers = Vendedores.objects.count()
     
     # Ventas del día de hoy - contar el número total de transacciones (no el dinero)
-    today = now().date()
+    # Usar timezone.now() para obtener la fecha actual en la zona horaria configurada
+    today_start = now().replace(hour=0, minute=0, second=0, microsecond=0)
+    today_end = today_start + timedelta(days=1)
+    
     sales_today_count = Ventas.objects.filter(
-        fecha_venta__date=today
+        fecha_venta__gte=today_start,
+        fecha_venta__lt=today_end
     ).count()
     
     # Total acumulado de ventas desde que se inició la aplicación (número total de transacciones)

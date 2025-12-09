@@ -493,11 +493,15 @@ def dashboard_vendedor(request):
     
     # ========== 2. VENTAS DEL DÍA ==========
     # Obtener total de ventas y cantidad de ventas de HOY del vendedor
-    today = now().date()
+    from datetime import timedelta
+    today_start = now().replace(hour=0, minute=0, second=0, microsecond=0)
+    today_end = today_start + timedelta(days=1)
+    
     try:
         ventas_hoy = Ventas.objects.filter(
             productoshasventas__producto_id_producto__vendedor=vendedor,
-            fecha_venta__date=today
+            fecha_venta__gte=today_start,
+            fecha_venta__lt=today_end
         ).values('id_venta').annotate(
             total_venta=F('total')
         ).aggregate(
