@@ -10,6 +10,7 @@ from django.contrib.auth.hashers import check_password, make_password
 import json
 from django.http import JsonResponse
 from core.services.email_service import ReceiptEmailService
+from core.decorators import requires_seller, requires_admin, requires_cliente
 
 # NOTA: Stripe se puede importar aquí cuando sea necesario integrar pagos reales
 
@@ -594,9 +595,11 @@ def product(request):
     return redirect('catalog')
 
 # DASHBOARDS por rol
+@requires_admin
 def dashboard_admin(request):
     return render(request, 'admin/dashboard.html')
 
+@requires_seller
 def dashboard_seller(request):
     return render(request, 'seller/dashboard.html')
 
@@ -688,22 +691,12 @@ def historial(request):
 
 
 # CONFIGURACIONES
+@requires_admin
 def admin_settings(request):
     """Mostrar página de configuraciones para administrador."""
+    # La autenticación ya está validada por el decorator @requires_admin
     user_id = request.session.get('user_id')
-    if not user_id:
-        messages.error(request, "Debes iniciar sesión como administrador.")
-        return redirect('login')
-
     persona = Personas.objects.filter(id_personas=user_id).first()
-    if not persona:
-        messages.error(request, "Usuario no encontrado.")
-        return redirect('login')
-
-    # Verificar que sea administrador
-    if not persona.rol or persona.rol.lower() not in ['administrador', 'admin']:
-        messages.error(request, "No tienes permisos para acceder a esta sección.")
-        return redirect('inicio')
 
     context = {
         'user_logged': True,
@@ -712,40 +705,34 @@ def admin_settings(request):
 
     return render(request, 'admin/settings.html', context)
 
+@requires_seller
 def seller_settings(request):
     return render(request, 'seller/settings.html')
 
 
+@requires_cliente
 def cliente_settings(request):
     # Mostrar página de configuraciones para clientes
+    # La autenticación ya está validada por el decorator @requires_cliente
     user_id = request.session.get('user_id')
-    user_logged = False
+    persona = Personas.objects.filter(id_personas=user_id).first()
     user_name = None
-
-    if user_id:
-        user_logged = True
-        try:
-            persona = Personas.objects.filter(id_personas=user_id).first()
-            if persona:
-                user_name = f"{persona.nombre_persona} {persona.apellido_persona}".strip()
-        except Exception:
-            user_name = None
+    if persona:
+        user_name = f"{persona.nombre_persona} {persona.apellido_persona}".strip()
 
     context = {
-        'user_logged': user_logged,
+        'user_logged': True,
         'user_name': user_name,
     }
 
     return render(request, 'cliente/settings.html', context)
 
 
+@requires_cliente
 def cliente_perfil(request):
     # Mostrar perfil del cliente (diseño solo de interfaz)
+    # La autenticación ya está validada por el decorator @requires_cliente
     user_id = request.session.get('user_id')
-    if not user_id:
-        messages.error(request, "Debes iniciar sesión para ver tu perfil.")
-        return redirect('login')
-
     persona = Personas.objects.filter(id_personas=user_id).first()
     user_name = None
     if persona:
@@ -760,12 +747,11 @@ def cliente_perfil(request):
     return render(request, 'cliente/perfil.html', context)
 
 
+@requires_cliente
 def editar_perfil(request):
     # Permitir al cliente editar sus datos y cambiar contraseña
+    # La autenticación ya está validada por el decorator @requires_cliente
     user_id = request.session.get('user_id')
-    if not user_id:
-        messages.error(request, "Debes iniciar sesión para editar tu perfil.")
-        return redirect('login')
 
     persona = Personas.objects.filter(id_personas=user_id).first()
     if not persona:
@@ -932,12 +918,11 @@ def editar_perfil(request):
 # Vistas para seller perfil y edición de perfil
 
 
+@requires_seller
 def seller_perfil(request):
+    # La autenticación ya está validada por el decorator @requires_seller
     # Mostrar perfil del vendedor
     user_id = request.session.get('user_id')
-    if not user_id:
-        messages.error(request, "Debes iniciar sesión para ver tu perfil.")
-        return redirect('login')
 
     persona = Personas.objects.filter(id_personas=user_id).first()
     if not persona:
@@ -954,13 +939,11 @@ def seller_perfil(request):
 
     return render(request, 'seller/perfil_seller.html', context)
 
+@requires_seller
 def editar_perfil_seller(request):
+    # La autenticación ya está validada por el decorator @requires_seller
     # Permitir al vendedor editar sus datos y cambiar contraseña
     user_id = request.session.get('user_id')
-    if not user_id:
-        messages.error(request, "Debes iniciar sesión para editar tu perfil.")
-        return redirect('login')
-
     persona = Personas.objects.filter(id_personas=user_id).first()
     if not persona:
         messages.error(request, "Usuario no encontrado.")
@@ -1130,17 +1113,12 @@ def editar_perfil_seller(request):
 # ======================================================
 #  PERFIL DEL ADMINISTRADOR
 # ======================================================
+@requires_admin
 def admin_perfil(request):
     """Muestra el perfil del administrador con sus datos personales."""
+    # La autenticación ya está validada por el decorator @requires_admin
     user_id = request.session.get('user_id')
-    if not user_id:
-        messages.error(request, "Debes iniciar sesión para ver tu perfil de administrador.")
-        return redirect('login')
-
     persona = Personas.objects.filter(id_personas=user_id).first()
-    if not persona:
-        messages.error(request, "Usuario no encontrado.")
-        return redirect('login')
 
     # Verificar rol
     if not persona.rol or persona.rol.lower() not in ['administrador', 'admin']:
@@ -1156,22 +1134,12 @@ def admin_perfil(request):
     return render(request, 'admin/perfil_admin.html', context)
 
 
+@requires_admin
 def editar_perfil_admin(request):
     """Permite al administrador editar sus datos y cambiar contraseña."""
+    # La autenticación ya está validada por el decorator @requires_admin
     user_id = request.session.get('user_id')
-    if not user_id:
-        messages.error(request, "Debes iniciar sesión para editar tu perfil.")
-        return redirect('login')
-
     persona = Personas.objects.filter(id_personas=user_id).first()
-    if not persona:
-        messages.error(request, "Usuario no encontrado.")
-        return redirect('login')
-
-    # Solo administradores
-    if not persona.rol or persona.rol.lower() not in ['administrador', 'admin']:
-        messages.error(request, "No tienes permisos para editar este perfil.")
-        return redirect('inicio')
 
     errors = {}
 

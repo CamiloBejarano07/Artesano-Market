@@ -8,6 +8,7 @@ import json
 from core.models import Productos
 from django.conf import settings
 from django.db.models import Q
+from core.decorators import requires_admin
 
 # ✅ Vista del catálogo (HTML)
 def mostrar_catalogo(request):
@@ -160,21 +161,12 @@ def exportar_csv(request):
 # ======================================================
 #  CRUD DE CATEGORÍAS (ADMIN)
 # ======================================================
+@requires_admin
 def listar_categorias_admin(request):
     """Lista todas las categorías para el administrador."""
+    # La autenticación ya está validada por el decorator @requires_admin
     user_id = request.session.get('user_id')
-    if not user_id:
-        messages.error(request, "Debes iniciar sesión.")
-        return redirect('login')
-
     persona = Personas.objects.filter(id_personas=user_id).first()
-    if not persona:
-        messages.error(request, "Usuario no encontrado.")
-        return redirect('login')
-
-    if not persona.rol or persona.rol.lower() not in ['administrador', 'admin']:
-        messages.error(request, "No tienes permisos para acceder a esta sección.")
-        return redirect('inicio')
 
     categorias = Categoria.objects.all().order_by('nombre_categoria')
 
@@ -187,21 +179,12 @@ def listar_categorias_admin(request):
     return render(request, 'admin/categorias_lista.html', context)
 
 
+@requires_admin
 def crear_categoria_admin(request):
     """Permite crear una nueva categoría."""
+    # La autenticación ya está validada por el decorator @requires_admin
     user_id = request.session.get('user_id')
-    if not user_id:
-        messages.error(request, "Debes iniciar sesión.")
-        return redirect('login')
-
     persona = Personas.objects.filter(id_personas=user_id).first()
-    if not persona:
-        messages.error(request, "Usuario no encontrado.")
-        return redirect('login')
-
-    if not persona.rol or persona.rol.lower() not in ['administrador', 'admin']:
-        messages.error(request, "No tienes permisos para acceder a esta sección.")
-        return redirect('inicio')
 
     if request.method == 'GET':
         return render(request, 'admin/categoria_crear.html', {
@@ -235,21 +218,12 @@ def crear_categoria_admin(request):
         })
 
 
+@requires_admin
 def editar_categoria_admin(request, id):
     """Permite editar una categoría existente."""
+    # La autenticación ya está validada por el decorator @requires_admin
     user_id = request.session.get('user_id')
-    if not user_id:
-        messages.error(request, "Debes iniciar sesión.")
-        return redirect('login')
-
     persona = Personas.objects.filter(id_personas=user_id).first()
-    if not persona:
-        messages.error(request, "Usuario no encontrado.")
-        return redirect('login')
-
-    if not persona.rol or persona.rol.lower() not in ['administrador', 'admin']:
-        messages.error(request, "No tienes permisos para acceder a esta sección.")
-        return redirect('inicio')
 
     categoria = get_object_or_404(Categoria, pk=id)
 
@@ -287,21 +261,12 @@ def editar_categoria_admin(request, id):
         })
 
 
+@requires_admin
 def eliminar_categoria_admin(request, id):
     """Permite eliminar una categoría."""
+    # La autenticación ya está validada por el decorator @requires_admin
     user_id = request.session.get('user_id')
-    if not user_id:
-        messages.error(request, "Debes iniciar sesión.")
-        return redirect('login')
-
     persona = Personas.objects.filter(id_personas=user_id).first()
-    if not persona:
-        messages.error(request, "Usuario no encontrado.")
-        return redirect('login')
-
-    if not persona.rol or persona.rol.lower() not in ['administrador', 'admin']:
-        messages.error(request, "No tienes permisos para acceder a esta sección.")
-        return redirect('inicio')
 
     categoria = get_object_or_404(Categoria, pk=id)
 

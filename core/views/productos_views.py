@@ -16,6 +16,7 @@ from django.http import JsonResponse
 from core.models import Productos, Categoria
 from core.forms import ProductoCreateForm, ProductoEditForm
 from core.models import Categoria
+from core.decorators import requires_seller
 
 
 def catalogo_view(request):
@@ -108,17 +109,13 @@ def productos(request):
 
 
 # CREAR PRODUCTO
+@requires_seller
 def producto_create(request):
     """Crea un nuevo producto."""
+    # La autenticación ya está validada por el decorator @requires_seller
     user_id = request.session.get("user_id")
-    if not user_id:
-        return redirect("login")
-
     persona = Personas.objects.filter(id_personas=user_id).first()
     vendedor = Vendedores.objects.filter(personas_id_personas=persona.id_personas).first() if persona else None
-
-    if not vendedor:
-        return HttpResponse("❌ No tienes permisos para crear productos (no eres vendedor).")
         
     # Obtener todas las categorías para el formulario
     categorias = Categoria.objects.all()
@@ -178,12 +175,11 @@ def producto_create(request):
 
 
 # EDITAR PRODUCTO
+@requires_seller
 def producto_editar(request, id):
     """Edita un producto existente."""
+    # La autenticación ya está validada por el decorator @requires_seller
     user_id = request.session.get("user_id")
-    if not user_id:
-        return redirect("login")
-
     producto = get_object_or_404(Productos, pk=id)
     persona = Personas.objects.filter(id_personas=user_id).first()
     vendedor = Vendedores.objects.filter(personas_id_personas=persona.id_personas).first() if persona else None
@@ -217,11 +213,11 @@ def producto_editar(request, id):
 
 
 # ELIMINAR PRODUCTO
+@requires_seller
 def producto_eliminar(request, id):
     """Elimina un producto."""
+    # La autenticación ya está validada por el decorator @requires_seller
     user_id = request.session.get("user_id")
-    if not user_id:
-        return redirect("login")
 
     producto = get_object_or_404(Productos, pk=id)
     persona = Personas.objects.filter(id_personas=user_id).first()

@@ -7,6 +7,7 @@ import csv, io
 
 from core.models import Personas, Productos, Vendedores
 from django.contrib.auth.hashers import check_password
+from core.decorators import requires_admin, requires_seller
 
 from django.conf import settings
 from django.utils import timezone
@@ -16,6 +17,7 @@ from django.shortcuts import render
 # ======================================================
 #  LISTAR VENDEDORES
 # ======================================================
+@requires_admin
 def listar_vendedores(request):
     vendedores = Vendedores.objects.select_related("personas_id_personas").all()
     return render(request, "admin/lista.html", {"vendedores": vendedores})
@@ -24,6 +26,7 @@ def listar_vendedores(request):
 # ======================================================
 #  CREAR VENDEDOR
 # ======================================================
+@requires_admin
 def crear_vendedor(request):
     if request.method == "POST":
         nombre = request.POST.get("nombre_persona")
@@ -60,6 +63,7 @@ def crear_vendedor(request):
 # ======================================================
 #  DETALLE DEL VENDEDOR
 # ======================================================
+@requires_admin
 def detalle_vendedor(request, id):
     persona = get_object_or_404(Personas, id_personas=id)
     vendedor = get_object_or_404(Vendedores, personas_id_personas=persona)
@@ -69,6 +73,7 @@ def detalle_vendedor(request, id):
 # ======================================================
 #  EDITAR VENDEDOR
 # ======================================================
+@requires_admin
 def editar_vendedor(request, id):
     persona = get_object_or_404(Personas, id_personas=id)
     vendedor = get_object_or_404(Vendedores, personas_id_personas=persona)
@@ -90,6 +95,7 @@ def editar_vendedor(request, id):
 # ======================================================
 # SUSPENDER VENDEDOR (NO ELIMINAR)
 # ======================================================
+@requires_admin
 def eliminar_vendedor(request, id):
     persona = get_object_or_404(Personas, id_personas=id)
     vendedor = get_object_or_404(Vendedores, personas_id_personas=persona)
@@ -106,6 +112,7 @@ def eliminar_vendedor(request, id):
 #  REACTIVAR VENDEDOR
 # ======================================================
 
+@requires_admin
 def reactivar_vendedor(request, id):
     """Vuelve a activar un vendedor que estaba suspendido.
 
@@ -132,6 +139,7 @@ def reactivar_vendedor(request, id):
 # ======================================================
 # FILTRAR VENDEDORES
 # ======================================================
+@requires_admin
 def filtrar_vendedores(request):
     criterio = request.GET.get("criterio")
     busqueda = request.GET.get("busqueda", "")
@@ -167,6 +175,7 @@ def filtrar_vendedores(request):
 # ======================================================
 # REPORTE DE VENDEDORES
 # ======================================================
+@requires_admin
 def reporte_vendedores(request):
     criterio = request.GET.get('criterio')
     busqueda = request.GET.get('busqueda')
@@ -198,6 +207,7 @@ def reporte_vendedores(request):
 # ======================================================
 # EXPORTAR A CSV
 # ======================================================
+@requires_admin
 def exportar_csv(request):
     vendedores = Vendedores.objects.select_related("personas_id_personas").all()
 
@@ -217,6 +227,7 @@ def exportar_csv(request):
 # ======================================================
 # CARGA MASIVA DESDE CSV
 # ======================================================
+@requires_admin
 def cargar_csv(request):
     if request.method == "POST" and request.FILES.get("file"):
         file = request.FILES["file"]
@@ -445,34 +456,20 @@ def editar_perfil_seller(request):
 # ======================================================
 #  DASHBOARD DEL VENDEDOR
 # ======================================================
+@requires_seller
 def dashboard_vendedor(request):
     from django.utils.timezone import now
     from django.db.models import Count, Sum, F, Q
     from django.db.models.functions import TruncDate
     import json
     
-    # ========== VALIDACIÓN DE SESIÓN Y AUTENTICACIÓN ==========
-    # Verificar que existe sesión de usuario
+    # El decorador ya garantiza que el usuario está logueado y es vendedor
+    # Obtener usuario autenticado
     user_id = request.session.get('user_id')
-    if not user_id:
-        return redirect('login')
-    
-    # Obtener la persona autenticada
-    try:
-        persona = Personas.objects.get(id_personas=user_id)
-    except Personas.DoesNotExist:
-        request.session.flush()  # Limpiar sesión corrupta
-        return redirect('login')
-    
-    # Validar que la persona sea vendedor (sensible a mayúsculas)
-    if not persona.rol or persona.rol.lower() != 'vendedor':
-        return redirect('login')
+    persona = Personas.objects.get(id_personas=user_id)
     
     # Obtener el objeto Vendedores del usuario autenticado
-    try:
-        vendedor = Vendedores.objects.get(personas_id_personas=persona)
-    except Vendedores.DoesNotExist:
-        return redirect('login')
+    vendedor = Vendedores.objects.get(personas_id_personas=persona)
     
     # Importar modelos necesarios
     from core.models import Productos, Ventas, ProductosHasVentas, Categoria
@@ -691,6 +688,7 @@ def dashboard_vendedor(request):
 # ======================================================
 #  PANEL DE PRODUCTOS DEL VENDEDOR
 # ======================================================
+@requires_seller
 def panel_productos_vendedor(request):
     """
     Panel para que el vendedor vea sus productos publicados y alerta de stock bajo.
@@ -768,13 +766,12 @@ def panel_productos_vendedor(request):
 # ======================================================
 # HISTORIAL DE VENTAS DEL VENDEDOR
 # ======================================================
+@requires_seller
 def historial_ventas_vendedor(request):
- 
+    # La autenticación ya está validada por el decorator @requires_seller
     try:
-        # Validar sesión del usuario
-        if 'user_id' not in request.session:
-            messages.warning(request, "Debes iniciar sesión para ver tu historial de ventas.")
-            return redirect('login')
+        # Obtener sesión del usuario
+        user_id = request.session.get('user_id')
         
         # Obtener la persona autenticada
         persona = Personas.objects.get(id_personas=request.session['user_id'])
@@ -886,17 +883,17 @@ def historial_ventas_vendedor(request):
 
 
 # ========== MARCAR PEDIDO COMO ENVIADO ==========
+@requires_seller
 def marcar_pedido_enviado(request, id_venta):
     """
     Marca un pedido como 'Enviado' cambiando el estado de la venta.
     Solo el vendedor propietario del pedido puede marcar como enviado.
     Envía un comprobante de envío al cliente por email.
     """
+    # La autenticación ya está validada por el decorator @requires_seller
     try:
-        # Validar sesión del usuario
-        if 'user_id' not in request.session:
-            messages.error(request, "Debes iniciar sesión para realizar esta acción.")
-            return redirect('login')
+        # Obtener sesión del usuario
+        user_id = request.session.get('user_id')
         
         # Obtener la persona autenticada
         persona = Personas.objects.get(id_personas=request.session['user_id'])

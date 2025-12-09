@@ -7,6 +7,7 @@ from core.models import Personas, Vendedores, Productos, Ventas, AuthUser
 from django.utils import timezone
 from django.db.models import Count, Sum
 from django.db.models.functions import TruncMonth
+from core.decorators import requires_admin
 import datetime
 import json
 from django.utils.safestring import mark_safe
@@ -14,6 +15,7 @@ from django.utils.safestring import mark_safe
 
 
 
+@requires_admin
 def mostrar_formulario_correos(request):
     correos = []
     vendedores = Vendedores.objects.select_related('personas_id_personas').all()
@@ -27,6 +29,7 @@ def mostrar_formulario_correos(request):
 
 
 
+@requires_admin
 def enviar_correos_masivos(request):
     if request.method == 'POST':
         asunto = request.POST.get('asunto')
@@ -72,6 +75,7 @@ def enviar_correos_masivos(request):
 
 
 # Vista para el dashboard del administrador
+@requires_admin
 def estadisticas_admin(request):
     from django.utils.timezone import now
     from datetime import timedelta, datetime
