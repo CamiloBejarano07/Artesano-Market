@@ -13,6 +13,8 @@ body {
     background-attachment: fixed;
     color: #333;
     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Header */
@@ -80,6 +82,9 @@ main {
     max-width: 1400px;
     margin-left: auto;
     margin-right: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 h1 {
@@ -345,7 +350,8 @@ footer {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    margin-top: 3rem;
+    margin-top: auto;
+    width: 100%;
 }
 
 .social-icon {
